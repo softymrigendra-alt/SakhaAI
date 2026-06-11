@@ -206,6 +206,210 @@
       text-align: center;
     }
 
+    /* ─── AGE SELECTOR ─── */
+    .age-range-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .age-btn {
+      background: var(--warm-white);
+      border: 1.5px solid rgba(200,118,58,0.2);
+      border-radius: var(--radius-sm);
+      padding: 14px 12px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .age-btn.selected {
+      background: var(--saffron-light);
+      border-color: var(--saffron);
+      color: var(--saffron-deep);
+      font-weight: 600;
+    }
+
+    /* ─── DHARMA MODE ─── */
+    .dharma-mode { font-size: 17px; }
+    .dharma-mode .karma-section { display: none; }
+    .dharma-mode #streak-days,
+    .dharma-mode .karma-flame { display: none; }
+    .dharma-mode .screen-title { font-size: 26px; }
+    .dharma-mode .card { font-size: 16px; }
+    .dharma-mode .nav-tab { font-size: 11px; }
+    .dharma-mode .gate-question { font-size: 26px; }
+    .dharma-mode .mood-label { font-size: 16px; }
+
+    /* ─── PANCHANG SCREEN ─── */
+    #screen-panchang { background: var(--cream); }
+    .panchang-header {
+      background: linear-gradient(160deg, #8B4F1E 0%, #C8763A 100%);
+      padding: 48px 24px 32px;
+      color: white;
+      text-align: center;
+    }
+    .panchang-header-date {
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 8px;
+    }
+    .panchang-header-tithi {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .panchang-header-tithi-hi {
+      font-size: 22px;
+      opacity: 0.85;
+      font-family: var(--font-serif);
+    }
+    .panchang-paksha {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border-radius: var(--radius-pill);
+      padding: 4px 14px;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+    .panchang-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 20px;
+    }
+    .panchang-card {
+      background: var(--warm-white);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .panchang-card.full-width {
+      grid-column: 1 / -1;
+    }
+    .panchang-card-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+    .panchang-card-value {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .panchang-card-value-hi {
+      font-size: 16px;
+      color: var(--saffron-deep);
+      font-family: var(--font-serif);
+    }
+    .panchang-card-note {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+    .panchang-sun-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .panchang-sun-item { text-align: center; }
+    .panchang-sun-icon { font-size: 24px; margin-bottom: 4px; }
+    .panchang-sun-time {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      color: var(--text-primary);
+    }
+    .panchang-sun-label { font-size: 12px; color: var(--text-tertiary); }
+    .rahu-active { border-left: 3px solid #E53E3E; }
+    .rahu-time { color: #C53030; font-weight: 600; }
+    .panchang-ai-card {
+      margin: 0 20px 20px;
+      background: linear-gradient(135deg, var(--indigo-light) 0%, #F3F2FC 100%);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .panchang-ai-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--indigo);
+      margin-bottom: 8px;
+    }
+    .panchang-ai-text {
+      font-size: 15px;
+      color: var(--text-primary);
+      line-height: 1.7;
+    }
+    .panchang-back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.9);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0 0 16px;
+    }
+
+    /* ─── PANCHANG HOME STRIP ─── */
+    .panchang-strip {
+      margin: 0 20px 16px;
+      background: linear-gradient(135deg, var(--gold-light) 0%, #FFF3DC 100%);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(212,168,67,0.2);
+    }
+    .panchang-strip-left { flex: 1; }
+    .panchang-strip-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .panchang-strip-tithi {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      color: var(--saffron-deep);
+    }
+    .panchang-strip-nakshatra {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    .panchang-strip-arrow {
+      color: var(--gold);
+      font-size: 18px;
+    }
+    .panchang-strip .rahu-dot {
+      width: 8px;
+      height: 8px;
+      background: #E53E3E;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 4px;
+    }
+
     /* ─── BUTTONS ─── */
     .btn-primary {
       width: 100%;
@@ -1646,6 +1850,14 @@
       />
       <div class="onboard-note">Just your name — nothing else needed to begin.</div>
 
+      <div class="onboard-label" style="margin-top:20px;">How old are you?</div>
+      <div class="age-range-options">
+        <button class="age-btn" onclick="selectAge('under30', this)">Under 30</button>
+        <button class="age-btn" onclick="selectAge('30to45', this)">30 – 45</button>
+        <button class="age-btn" onclick="selectAge('45to60', this)">45 – 60</button>
+        <button class="age-btn" onclick="selectAge('60plus', this)">60 +</button>
+      </div>
+
       <button class="btn-primary" onclick="handleOnboardContinue()">
         Meet Sakhaa →
       </button>
@@ -1815,6 +2027,16 @@
       </div>
     </div>
     <div class="home-body">
+      <!-- Panchang strip — always visible, taps to full screen -->
+      <div class="panchang-strip" onclick="openPanchang('home')" id="home-panchang-strip" style="display:none;">
+        <div class="panchang-strip-left">
+          <div class="panchang-strip-label">🗓 Today's Panchang</div>
+          <div class="panchang-strip-tithi" id="strip-tithi">Loading…</div>
+          <div class="panchang-strip-nakshatra" id="strip-nakshatra"></div>
+        </div>
+        <div class="panchang-strip-arrow">›</div>
+      </div>
+
       <!-- Karma bar -->
       <div class="karma-section">
         <div class="karma-flame">🔥</div>
@@ -1912,6 +2134,74 @@
   </div>
 
   <!-- ── PRACTICE ── -->
+  <!-- ── PANCHANG ── -->
+  <div id="screen-panchang" class="screen">
+    <div class="panchang-header">
+      <button class="panchang-back" onclick="history.back(); showScreen(window._panchaangFrom || 'screen-home')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        Back
+      </button>
+      <div class="panchang-header-date" id="panchang-header-date"></div>
+      <div class="panchang-header-tithi" id="panchang-header-tithi">—</div>
+      <div class="panchang-header-tithi-hi" id="panchang-header-tithi-hi"></div>
+      <div class="panchang-paksha" id="panchang-paksha"></div>
+    </div>
+
+    <div class="panchang-grid">
+      <div class="panchang-card">
+        <div class="panchang-card-label">Nakshatra</div>
+        <div class="panchang-card-value" id="panch-nakshatra">—</div>
+        <div class="panchang-card-value-hi" id="panch-nakshatra-hi"></div>
+        <div class="panchang-card-note" id="panch-nakshatra-note"></div>
+      </div>
+      <div class="panchang-card">
+        <div class="panchang-card-label">Yoga</div>
+        <div class="panchang-card-value" id="panch-yoga">—</div>
+        <div class="panchang-card-value-hi" id="panch-yoga-hi"></div>
+        <div class="panchang-card-note" id="panch-yoga-note"></div>
+      </div>
+      <div class="panchang-card">
+        <div class="panchang-card-label">Karana</div>
+        <div class="panchang-card-value" id="panch-karana">—</div>
+        <div class="panchang-card-note" id="panch-karana-note"></div>
+      </div>
+      <div class="panchang-card">
+        <div class="panchang-card-label">Var (Day)</div>
+        <div class="panchang-card-value" id="panch-var">—</div>
+        <div class="panchang-card-value-hi" id="panch-var-hi"></div>
+      </div>
+      <div class="panchang-card full-width">
+        <div class="panchang-card-label">Sunrise & Sunset</div>
+        <div class="panchang-sun-row">
+          <div class="panchang-sun-item">
+            <div class="panchang-sun-icon">🌅</div>
+            <div class="panchang-sun-time" id="panch-sunrise">—</div>
+            <div class="panchang-sun-label">Sunrise</div>
+          </div>
+          <div class="panchang-sun-item">
+            <div class="panchang-sun-icon">🌇</div>
+            <div class="panchang-sun-time" id="panch-sunset">—</div>
+            <div class="panchang-sun-label">Sunset</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--text-tertiary);text-align:center;margin-top:8px;" id="panch-location-note">Using approximate times · <button onclick="getPanchaangLocation()" style="background:none;border:none;color:var(--saffron);font-size:12px;cursor:pointer;padding:0;">Use my location</button></div>
+      </div>
+      <div class="panchang-card full-width" id="panch-rahu-card">
+        <div class="panchang-card-label">Rahu Kaal ⚠️</div>
+        <div class="panchang-card-value rahu-time" id="panch-rahu">—</div>
+        <div class="panchang-card-note">Avoid important work during this time</div>
+      </div>
+    </div>
+
+    <!-- AI interpretation -->
+    <div class="panchang-ai-card" id="panch-ai-card">
+      <div class="panchang-ai-label">Sakhaa says</div>
+      <div class="panchang-ai-text" id="panch-ai-text">Sakhaa is reading today's Panchang…</div>
+    </div>
+
+    <div style="height:20px;"></div>
+  </div>
+
   <div id="screen-practice" class="screen">
     <div class="screen-header">
       <div class="screen-title">Practice</div>
@@ -2083,13 +2373,13 @@
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
         <polyline points="9 22 9 12 15 12 15 22"></polyline>
       </svg>
-      Home
+      <span>Home</span>
     </button>
     <button class="nav-tab" data-tab="saarthi" onclick="switchTab('saarthi')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
       </svg>
-      Saarthi
+      <span>Saarthi</span>
     </button>
     <button class="nav-tab" data-tab="wisdom" onclick="switchTab('wisdom')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -2097,20 +2387,30 @@
         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
         <line x1="12" y1="17" x2="12.01" y2="17"></line>
       </svg>
-      Wisdom
+      <span>Wisdom</span>
+    </button>
+    <!-- Panchang tab — shown only in Dharma Mode -->
+    <button id="nav-panchang" class="nav-tab" data-tab="panchang" onclick="openPanchang('home')" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line>
+        <line x1="8" y1="2" x2="8" y2="6"></line>
+        <line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>
+      <span>पंचांग</span>
     </button>
     <button class="nav-tab" data-tab="practice" onclick="switchTab('practice')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
       </svg>
-      Practice
+      <span>Practice</span>
     </button>
     <button class="nav-tab" data-tab="journey" onclick="switchTab('journey')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
         <polyline points="17 6 23 6 23 12"></polyline>
       </svg>
-      Journey
+      <span>Journey</span>
     </button>
   </nav>
 
@@ -2521,6 +2821,9 @@ I'll be right here when you're ready to talk about anything else.`;
         userName = userProfile.name || 'Friend';
         karmaPoints = userProfile.karmaPoints || 0;
         karmaStreak = userProfile.karmaStreak || 0;
+        const savedMode = userProfile.appMode || detectMode(userProfile.ageRange || '');
+        applyMode(savedMode);
+        if (savedMode === 'dharma') applyDharmaStrings();
         await loadGateHistory(uid);
         hideLoading();
 
@@ -2631,12 +2934,17 @@ I'll be right here when you're ready to talk about anything else.`;
     try {
       const userCred = await signInAnonymously(auth);
       currentUser = userCred.user;
+      const mode = detectMode(selectedAgeRange);
       await setDoc(doc(db, 'users', currentUser.uid, 'profile', 'data'), {
         name: userName,
         karmaPoints: 0,
         karmaStreak: 0,
+        ageRange: selectedAgeRange || 'unknown',
+        appMode: mode,
         createdAt: serverTimestamp()
       });
+      applyMode(mode);
+      if (mode === 'dharma') applyDharmaStrings();
       showScreen('screen-gate');
       updateGateGreeting();
     } catch (e) {
@@ -2812,7 +3120,7 @@ What you NEVER do:
 
 When the user is in distress: validate first, wisdom second, practical help third. Always acknowledge feelings before guidance.
 
-Remember: You are their sacred friend. Speak like one.`;
+Remember: You are their sacred friend. Speak like one.${appMode === 'dharma' ? '\n\nIMPORTANT: Always respond in Hindi using Devanagari script. Keep sentences short, warm, and easy to understand. Avoid complex Sanskrit unless explaining it simply.' : ''}`;
 
     // Memory context
     prompt += `\n\n=== SAKHAA MEMORY ===\nUser: ${userName}\nToday's mood: ${currentMood}`;
@@ -3919,6 +4227,230 @@ For this Ask Anything response:
   });
   window.renderJournalStep = renderJournalStep;
   window.renderPoojaContent = renderPoojaContent;
+
+  // ─── AGE & MODE ────────────────────────────────────────────────────────
+
+  let selectedAgeRange = '';
+  let appMode = 'sakhaa'; // 'sakhaa' | 'dharma'
+
+  window.selectAge = function(range, btn) {
+    selectedAgeRange = range;
+    document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  };
+
+  function detectMode(ageRange) {
+    return (ageRange === '45to60' || ageRange === '60plus') ? 'dharma' : 'sakhaa';
+  }
+
+  function applyMode(mode) {
+    appMode = mode;
+    document.body.classList.toggle('dharma-mode', mode === 'dharma');
+
+    // Nav: Dharma mode swaps Wisdom tab → Panchang
+    const wisdomTab = document.querySelector('.nav-tab[data-tab="wisdom"]');
+    const panchaangNavBtn = document.getElementById('nav-panchang');
+    if (mode === 'dharma') {
+      if (wisdomTab) wisdomTab.style.display = 'none';
+      if (panchaangNavBtn) panchaangNavBtn.style.display = 'flex';
+    } else {
+      if (wisdomTab) wisdomTab.style.display = '';
+      if (panchaangNavBtn) panchaangNavBtn.style.display = 'none';
+    }
+
+    // Always show Panchang strip on home
+    const strip = document.getElementById('home-panchang-strip');
+    if (strip) strip.style.display = 'flex';
+
+    // Compute and render Panchang data
+    renderPanchang();
+  }
+
+  // ─── PANCHANG CALCULATIONS ─────────────────────────────────────────────
+
+  const TITHIS = ['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Saptami','Ashtami','Navami','Dashami','Ekadashi','Dwadashi','Trayodashi','Chaturdashi','Purnima','Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Saptami','Ashtami','Navami','Dashami','Ekadashi','Dwadashi','Trayodashi','Chaturdashi','Amavasya'];
+  const TITHIS_HI = ['प्रतिपदा','द्वितीया','तृतीया','चतुर्थी','पंचमी','षष्ठी','सप्तमी','अष्टमी','नवमी','दशमी','एकादशी','द्वादशी','त्रयोदशी','चतुर्दशी','पूर्णिमा','प्रतिपदा','द्वितीया','तृतीया','चतुर्थी','पंचमी','षष्ठी','सप्तमी','अष्टमी','नवमी','दशमी','एकादशी','द्वादशी','त्रयोदशी','चतुर्दशी','अमावस्या'];
+  const NAKSHATRAS = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Mula','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati'];
+  const NAKSHATRAS_HI = ['अश्विनी','भरणी','कृत्तिका','रोहिणी','मृगशिरा','आर्द्रा','पुनर्वसु','पुष्य','आश्लेषा','मघा','पूर्व फाल्गुनी','उत्तर फाल्गुनी','हस्त','चित्रा','स्वाती','विशाखा','अनुराधा','ज्येष्ठा','मूल','पूर्व आषाढ़','उत्तर आषाढ़','श्रवण','धनिष्ठा','शतभिषा','पूर्व भाद्रपद','उत्तर भाद्रपद','रेवती'];
+  const NAKSHATRA_NOTES = ['Good for new beginnings','Avoid major decisions','Auspicious for learning','Excellent for all work','Good for travel','Creative energy is high','Favorable for family matters','Most auspicious nakshatra','Exercise caution','Honors ancestors','Enjoy life today','Steady progress favored','Quick results likely','Good for arts & music','Independent spirit today','Mixed results','Devotion brings rewards','Careful with words','Powerful, use wisely','Good for competitive work','Stable and grounding','Learning & listening','Material success favored','Healing energy today','Spiritual gains likely','Deep wisdom available','Completion & endings'];
+  const YOGAS = ['Vishkambha','Priti','Ayushman','Saubhagya','Shobhana','Atiganda','Sukarma','Dhriti','Shula','Ganda','Vriddhi','Dhruva','Vyaghata','Harshana','Vajra','Siddhi','Vyatipata','Variyan','Parigha','Shiva','Siddha','Sadhya','Shubha','Shukla','Brahma','Indra','Vaidhriti'];
+  const YOGAS_HI = ['विष्कम्भ','प्रीति','आयुष्मान','सौभाग्य','शोभन','अतिगण्ड','सुकर्मा','धृति','शूल','गण्ड','वृद्धि','ध्रुव','व्याघात','हर्षण','वज्र','सिद्धि','व्यतिपात','वरीयान','परिघ','शिव','सिद्ध','साध्य','शुभ','शुक्ल','ब्रह्म','इन्द्र','वैधृति'];
+  const YOGA_NOTES = ['Avoid new work','Love & happiness','Long life & prosperity','Good fortune today','Beautiful & auspicious','Take care of health','Good deeds rewarded','Stability & endurance','Avoid conflicts','Obstacles possible','Growth & increase','Permanent results','Sudden changes','Joy & celebration','Hard work succeeds','Accomplishment likely','Inauspicious, be careful','Variable results','Restrictions possible','Blessings of Shiva','Success in all work','Goals achieved','Auspicious day','Purity of mind','Creative & scholarly','Leadership energy','Avoid major decisions'];
+  const KARANAS = ['Bava','Balava','Kaulava','Taitila','Gara','Vanija','Vishti','Shakuni','Chatushpada','Naga','Kimstughna'];
+  const VARS = ['Ravivaar','Somvaar','Mangalvaar','Budhvaar','Guruvaar','Shukravaar','Shanivaar'];
+  const VARS_HI = ['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
+  // Rahu Kaal: part of day (1=first 90min after sunrise, 8=last 90min before sunset)
+  const RAHU_PART = [7, 1, 6, 4, 5, 3, 2]; // Sun=7,Mon=1,Tue=6,Wed=4,Thu=5,Fri=3,Sat=2
+
+  // Default location: New Delhi
+  let panchaangLat = 28.6139;
+  let panchaangLng = 77.2090;
+  let panchaangLocationName = 'New Delhi';
+
+  function julianDay(date) {
+    const Y = date.getFullYear(), M = date.getMonth() + 1, D = date.getDate();
+    const A = Math.floor((14 - M) / 12);
+    const y = Y + 4800 - A, m = M + 12 * A - 3;
+    return D + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+  }
+
+  function sunMoonLongitudes(date) {
+    const jd = julianDay(date);
+    const T = (jd - 2451545.0) / 36525;
+    // Solar longitude (simplified)
+    const L0 = 280.46646 + 36000.76983 * T;
+    const M = (357.52911 + 35999.05029 * T) * Math.PI / 180;
+    const sunLong = ((L0 + 1.914602 * Math.sin(M) + 0.019993 * Math.sin(2 * M)) % 360 + 360) % 360;
+    // Lunar longitude (simplified)
+    const Lm = 218.3165 + 481267.8813 * T;
+    const Mm = (134.9634 + 477198.8676 * T) * Math.PI / 180;
+    const moonLong = ((Lm + 6.2886 * Math.sin(Mm) + 1.2740 * Math.sin(2 * Mm - M * 180 / Math.PI) + 0.6583 * Math.sin(2 * Mm)) % 360 + 360) % 360;
+    return { sunLong, moonLong };
+  }
+
+  function calcSunriseSunset(date, lat, lng) {
+    const jd = julianDay(date);
+    const n = jd - 2451545.0;
+    const L = (280.46 + 0.9856474 * n) % 360;
+    const g = ((357.528 + 0.9856003 * n) % 360) * Math.PI / 180;
+    const lambda = (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * Math.PI / 180;
+    const epsilon = 23.439 * Math.PI / 180;
+    const sinDec = Math.sin(epsilon) * Math.sin(lambda);
+    const dec = Math.asin(sinDec);
+    const latR = lat * Math.PI / 180;
+    const cosHA = (Math.cos(90.833 * Math.PI / 180) - Math.sin(latR) * sinDec) / (Math.cos(latR) * Math.cos(dec));
+    if (Math.abs(cosHA) > 1) return { sunrise: '6:00 AM', sunset: '6:00 PM' };
+    const HA = Math.acos(cosHA) * 180 / Math.PI;
+    const EqT = -1.915 * Math.sin(g) - 0.020 * Math.sin(2 * g) + 2.466 * Math.sin(2 * lambda) - 0.053 * Math.sin(4 * lambda);
+    const UTC_offset = lng / 15;
+    const riseUTC = 12 - HA / 15 - EqT / 60;
+    const setUTC = 12 + HA / 15 - EqT / 60;
+    const format = h => {
+      const total = ((h + UTC_offset) % 24 + 24) % 24;
+      const hh = Math.floor(total), mm = Math.round((total - hh) * 60);
+      const ampm = hh < 12 ? 'AM' : 'PM';
+      return `${hh % 12 || 12}:${String(mm).padStart(2, '0')} ${ampm}`;
+    };
+    return { sunrise: format(riseUTC), sunset: format(setUTC), riseH: ((riseUTC + UTC_offset) % 24 + 24) % 24, setH: ((setUTC + UTC_offset) % 24 + 24) % 24 };
+  }
+
+  function calcRahuKaal(dayOfWeek, riseH, setH) {
+    const part = RAHU_PART[dayOfWeek];
+    const duration = (setH - riseH) / 8;
+    const start = riseH + (part - 1) * duration;
+    const end = start + duration;
+    const fmt = h => {
+      const hh = Math.floor(h), mm = Math.round((h - hh) * 60);
+      const ampm = hh < 12 ? 'AM' : 'PM';
+      return `${hh % 12 || 12}:${String(mm).padStart(2, '0')} ${ampm}`;
+    };
+    const nowH = new Date().getHours() + new Date().getMinutes() / 60;
+    const isActive = nowH >= start && nowH < end;
+    return { text: `${fmt(start)} – ${fmt(end)}`, isActive };
+  }
+
+  function computePanchang(date) {
+    const { sunLong, moonLong } = sunMoonLongitudes(date);
+    const diff = ((moonLong - sunLong) % 360 + 360) % 360;
+    const tithiIdx = Math.floor(diff / 12) % 30;
+    const paksha = tithiIdx < 15 ? 'Shukla Paksha' : 'Krishna Paksha';
+    const pakshaHi = tithiIdx < 15 ? 'शुक्ल पक्ष' : 'कृष्ण पक्ष';
+    const nakshatraIdx = Math.floor(moonLong / (360 / 27)) % 27;
+    const yogaIdx = Math.floor(((sunLong + moonLong) % 360) / (360 / 27)) % 27;
+    const karanaIdx = Math.floor(diff / 6) % 11;
+    const sun = calcSunriseSunset(date, panchaangLat, panchaangLng);
+    const rahu = calcRahuKaal(date.getDay(), sun.riseH || 6, sun.setH || 18);
+    return { tithiIdx, paksha, pakshaHi, nakshatraIdx, yogaIdx, karanaIdx, sun, rahu };
+  }
+
+  function renderPanchang() {
+    const now = new Date();
+    const p = computePanchang(now);
+
+    // Home strip
+    const strip = document.getElementById('home-panchang-strip');
+    if (strip) strip.style.display = 'flex';
+    const el = id => document.getElementById(id);
+    if (el('strip-tithi')) el('strip-tithi').textContent = `${TITHIS[p.tithiIdx]} · ${p.paksha}`;
+    if (el('strip-nakshatra')) {
+      el('strip-nakshatra').innerHTML = `${NAKSHATRAS[p.nakshatraIdx]} Nakshatra${p.rahu.isActive ? ' · <span class="rahu-dot"></span>Rahu Kaal now' : ''}`;
+    }
+
+    // Full screen
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    if (el('panchang-header-date')) el('panchang-header-date').textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+    if (el('panchang-header-tithi')) el('panchang-header-tithi').textContent = TITHIS[p.tithiIdx];
+    if (el('panchang-header-tithi-hi')) el('panchang-header-tithi-hi').textContent = TITHIS_HI[p.tithiIdx];
+    if (el('panchang-paksha')) el('panchang-paksha').textContent = `${p.paksha} · ${p.pakshaHi}`;
+    if (el('panch-nakshatra')) el('panch-nakshatra').textContent = NAKSHATRAS[p.nakshatraIdx];
+    if (el('panch-nakshatra-hi')) el('panch-nakshatra-hi').textContent = NAKSHATRAS_HI[p.nakshatraIdx];
+    if (el('panch-nakshatra-note')) el('panch-nakshatra-note').textContent = NAKSHATRA_NOTES[p.nakshatraIdx];
+    if (el('panch-yoga')) el('panch-yoga').textContent = YOGAS[p.yogaIdx];
+    if (el('panch-yoga-hi')) el('panch-yoga-hi').textContent = YOGAS_HI[p.yogaIdx];
+    if (el('panch-yoga-note')) el('panch-yoga-note').textContent = YOGA_NOTES[p.yogaIdx];
+    if (el('panch-karana')) el('panch-karana').textContent = KARANAS[p.karanaIdx];
+    if (el('panch-var')) el('panch-var').textContent = VARS[now.getDay()];
+    if (el('panch-var-hi')) el('panch-var-hi').textContent = VARS_HI[now.getDay()];
+    if (el('panch-sunrise')) el('panch-sunrise').textContent = p.sun.sunrise;
+    if (el('panch-sunset')) el('panch-sunset').textContent = p.sun.sunset;
+    if (el('panch-rahu')) el('panch-rahu').textContent = p.rahu.text;
+    if (el('panch-rahu-card')) el('panch-rahu-card').classList.toggle('rahu-active', p.rahu.isActive);
+    if (el('panch-location-note')) el('panch-location-note').innerHTML = `${panchaangLocationName} · <button onclick="getPanchaangLocation()" style="background:none;border:none;color:var(--saffron);font-size:12px;cursor:pointer;padding:0;">Use my location</button>`;
+
+    // AI interpretation
+    loadPanchaangAI(p);
+  }
+
+  async function loadPanchaangAI(p) {
+    const aiEl = document.getElementById('panch-ai-text');
+    if (!aiEl) return;
+    const tithi = TITHIS[p.tithiIdx];
+    const nakshatra = NAKSHATRAS[p.nakshatraIdx];
+    const yoga = YOGAS[p.yogaIdx];
+    const lang = appMode === 'dharma' ? 'Hindi (Devanagari script)' : 'English';
+    const prompt = `Today's Panchang: Tithi is ${tithi}, Nakshatra is ${nakshatra}, Yoga is ${yoga}, Paksha is ${p.paksha}. In 2-3 warm, friendly sentences in ${lang}, tell the user what this means for their day — what energy is present, what to be mindful of, and one simple action aligned with today's Panchang. Speak as a sacred friend, not as an astrologer.`;
+    try {
+      const text = await callAI([{ role: 'user', content: prompt }], buildSystemPrompt());
+      aiEl.textContent = text;
+    } catch (e) {
+      aiEl.textContent = appMode === 'dharma'
+        ? `आज ${TITHIS_HI[p.tithiIdx]} तिथि है। ${NAKSHATRAS_HI[p.nakshatraIdx]} नक्षत्र में यह दिन ${NAKSHATRA_NOTES[p.nakshatraIdx].toLowerCase()} के लिए उत्तम है।`
+        : `Today is ${tithi} under ${nakshatra} Nakshatra — ${NAKSHATRA_NOTES[p.nakshatraIdx].toLowerCase()}.`;
+    }
+  }
+
+  window.openPanchang = function(from) {
+    window._panchaangFrom = `screen-${from}`;
+    showScreen('screen-panchang');
+  };
+
+  window.getPanchaangLocation = function() {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(pos => {
+      panchaangLat = pos.coords.latitude;
+      panchaangLng = pos.coords.longitude;
+      panchaangLocationName = 'Your location';
+      renderPanchang();
+    });
+  };
+
+  // ─── DHARMA MODE UI STRINGS ────────────────────────────────────────────
+
+  const DHARMA_STRINGS = {
+    'gate-question': 'आज आप कैसा महसूस कर रहे हैं?',
+    'practice-title': 'साधना',
+    'journey-title': 'यात्रा',
+  };
+
+  function applyDharmaStrings() {
+    const gateQ = document.getElementById('gate-question');
+    if (gateQ) gateQ.textContent = DHARMA_STRINGS['gate-question'];
+    // Nav labels
+    const navLabels = document.querySelectorAll('.nav-tab span');
+    const hindiLabels = ['होम', 'सारथी', 'ज्ञान', 'साधना', 'यात्रा'];
+    navLabels.forEach((el, i) => { if (hindiLabels[i]) el.textContent = hindiLabels[i]; });
+  }
 
   // ─── KNOW YOU BETTER ───────────────────────────────────────────────────
 
