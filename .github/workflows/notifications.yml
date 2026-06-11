@@ -1,0 +1,55 @@
+name: Sakhaa Push Notifications
+
+on:
+  schedule:
+    - cron: '0 2 * * *'    # 7:30 AM IST  — morning gate
+    - cron: '30 5 * * *'   # 11:00 AM IST — midday check-in (unhappy gate users)
+    - cron: '0 7 * * *'    # 12:30 PM IST — midday nudge (so-so gate users)
+    - cron: '30 15 * * *'  # 9:00 PM IST  — evening reflection
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Notification type to send manually'
+        required: true
+        type: choice
+        options:
+          - morning
+          - midday-checkin
+          - midday-nudge
+          - evening
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: scripts/package.json
+
+      - name: Install dependencies
+        working-directory: scripts
+        run: npm install
+
+      - name: Resolve notification type
+        id: resolve
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "type=${{ github.event.inputs.type }}" >> $GITHUB_OUTPUT
+          else
+            case "${{ github.event.schedule }}" in
+              "0 2 * * *")   echo "type=morning"         >> $GITHUB_OUTPUT ;;
+              "30 5 * * *")  echo "type=midday-checkin"  >> $GITHUB_OUTPUT ;;
+              "0 7 * * *")   echo "type=midday-nudge"    >> $GITHUB_OUTPUT ;;
+              "30 15 * * *") echo "type=evening"         >> $GITHUB_OUTPUT ;;
+            esac
+          fi
+
+      - name: Send notifications
+        working-directory: scripts
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node send-notifications.js --type ${{ steps.resolve.outputs.type }}

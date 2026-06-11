@@ -1384,6 +1384,102 @@
     }
     .screen.active > * { animation: fadeInUp 0.35s ease forwards; }
 
+    /* ─── NOTIFICATION PROMPT ─── */
+    #notif-prompt-card {
+      margin: 20px 20px 0;
+      background: linear-gradient(135deg, var(--indigo-light) 0%, #F3F2FC 100%);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .notif-prompt-icon { font-size: 28px; margin-bottom: 10px; }
+    .notif-prompt-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      color: var(--indigo);
+      margin-bottom: 8px;
+    }
+    .notif-prompt-body {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .notif-prompt-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .notif-allow-btn {
+      background: var(--indigo);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 12px 22px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1;
+    }
+    .notif-skip-btn {
+      background: transparent;
+      color: var(--text-tertiary);
+      border: none;
+      padding: 12px 16px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* ─── NOTIFICATION SETTINGS (Journey screen) ─── */
+    .notif-settings-card { margin-bottom: 16px; }
+    .notif-settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .notif-settings-label {
+      font-size: 15px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    .notif-settings-sub {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+    .notif-toggle-btn {
+      background: var(--saffron);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 8px 18px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .notif-toggle-btn.off {
+      background: var(--saffron-light);
+      color: var(--saffron-deep);
+    }
+    .rest-day-btn {
+      width: 100%;
+      background: var(--cream);
+      color: var(--text-secondary);
+      border: 1.5px solid rgba(200,118,58,0.2);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateX(-50%) translateY(-12px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
     /* ─── KARMA PULSE ─── */
     @keyframes karmaPlus {
       0% { opacity: 1; transform: translateY(0) scale(1); }
@@ -1540,6 +1636,19 @@
         <div class="response-action-label">What would help right now?</div>
         <div id="response-action-chips" class="action-chips">
           <!-- populated by JS based on mood -->
+        </div>
+      </div>
+
+      <!-- Notification permission prompt — shown once, only if not yet granted -->
+      <div id="notif-prompt-card" style="display:none;">
+        <div class="notif-prompt-icon">🔔</div>
+        <div class="notif-prompt-title">Let Sakhaa check in on you</div>
+        <div class="notif-prompt-body">
+          A gentle morning nudge. An evening reflection invite. Nothing more — and always rooted in how you're actually feeling today.
+        </div>
+        <div class="notif-prompt-actions">
+          <button class="notif-allow-btn" onclick="requestNotificationPermission()">Yes, stay in touch</button>
+          <button class="notif-skip-btn" onclick="document.getElementById('notif-prompt-card').style.display='none'">Maybe later</button>
         </div>
       </div>
     </div>
@@ -1747,6 +1856,36 @@
         </div>
       </div>
 
+      <!-- Notification settings -->
+      <div class="card notif-settings-card">
+        <div class="card-label">Check-ins from Sakhaa</div>
+
+        <!-- Notifications ON state -->
+        <div id="notif-settings-on" style="display:none;">
+          <div class="notif-settings-row">
+            <div>
+              <div class="notif-settings-label">Morning gate · 7:30 AM</div>
+              <div class="notif-settings-sub">Midday check-in · Evening reflection · 9:00 PM</div>
+            </div>
+            <button class="notif-toggle-btn off" onclick="disableNotifications()">Pause</button>
+          </div>
+          <button id="rest-day-btn" class="rest-day-btn" onclick="toggleRestDay()">
+            Need a quiet day? Pause notifications for 24 hours →
+          </button>
+        </div>
+
+        <!-- Notifications OFF state -->
+        <div id="notif-settings-off" style="display:block;">
+          <div class="notif-settings-row">
+            <div>
+              <div class="notif-settings-label">Notifications are off</div>
+              <div class="notif-settings-sub">Let Sakhaa check in at the right moments</div>
+            </div>
+            <button class="notif-toggle-btn" onclick="enableNotifications()">Turn on</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Evening reflection CTA -->
       <div id="journal-cta-card" class="card" style="background: linear-gradient(135deg, var(--gold-light) 0%, #FFF8EC 100%); cursor: pointer;" onclick="startJournal()">
         <div class="card-label" style="color: var(--gold);">Evening reflection</div>
@@ -1840,6 +1979,7 @@
 <!-- ─── FIREBASE ─── -->
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+  import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js';
   import {
     getAuth,
     signInWithPopup,
@@ -1866,6 +2006,8 @@
   const CONFIG = {
     groqApiKey: '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',
     geminiApiKey: 'AQ.Ab8RN6Ls1aVaSTjeO-HAriBot4-4Ppf_a8-xoEZ8z5Y2UtcRwA',
+    // Get from Firebase Console → Project Settings → Cloud Messaging → Web Push certificates
+    vapidKey: 'BBma5U_oUwu5VATiDrsuY1uXb4QHviuT7BPcDL_WqeOHKmnxwuo7bd8amAtgO-D4YPRNYf0r_bj3dcuozao0evQ',
     firebase: {
        apiKey: "AIzaSyB4m6-Ym-UAcNYw93ysMc0bF_L-Aadze_c",
        authDomain: "sakhaa-ai.firebaseapp.com",
@@ -1881,6 +2023,8 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
+  const messaging = ('Notification' in window && 'serviceWorker' in navigator)
+    ? getMessaging(app) : null;
 
   // ─── STATE ───
   let userName = 'Friend';
@@ -2252,6 +2396,14 @@ I'll be right here when you're ready to talk about anything else.`;
           showScreen('screen-gate');
           updateGateGreeting();
         }
+        // Handle deep-link from notification click
+        if (window._notifTargetScreen) {
+          const s = window._notifTargetScreen;
+          delete window._notifTargetScreen;
+          setTimeout(() => showScreen(`screen-${s}`), 400);
+        }
+        // Sync notification settings UI
+        initNotifState();
       } else {
         hideLoading();
         showScreen('screen-onboard');
@@ -2415,6 +2567,11 @@ I'll be right here when you're ready to talk about anything else.`;
     updateResponseScreen();
     loadGateResponse();
     saveGateSession().catch(e => console.warn('Gate session save failed:', e));
+    // Show notification prompt if permission not yet granted
+    if ('Notification' in window && Notification.permission === 'default') {
+      const prompt = document.getElementById('notif-prompt-card');
+      if (prompt) prompt.style.display = 'block';
+    }
   }
 
   function updateResponseScreen() {
@@ -3605,6 +3762,157 @@ For this Ask Anything response:
   });
   window.renderJournalStep = renderJournalStep;
   window.renderPoojaContent = renderPoojaContent;
+
+  // ─── PUSH NOTIFICATIONS ────────────────────────────────────────────────
+
+  // Save FCM token to Firestore under the user's profile
+  async function saveFCMToken(token) {
+    if (!currentUser) return;
+    await setDoc(doc(db, `users/${currentUser.uid}/profile/data`), {
+      fcmToken: token,
+      fcmTokenUpdated: serverTimestamp(),
+      notifEnabled: true
+    }, { merge: true });
+  }
+
+  // Request permission and register for push notifications
+  window.requestNotificationPermission = async function() {
+    if (!messaging || !currentUser) return;
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        hideNotifPrompt();
+        return;
+      }
+      // Register firebase-messaging-sw.js alongside the existing sw.js
+      const swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+      const token = await getToken(messaging, {
+        vapidKey: CONFIG.vapidKey,
+        serviceWorkerRegistration: swReg
+      });
+      if (token) {
+        await saveFCMToken(token);
+        hideNotifPrompt();
+        showNotifSettingsActive();
+        // Handle foreground messages (app is open)
+        onMessage(messaging, payload => {
+          // When app is open, show an in-app toast instead of system notification
+          const notif = payload.notification || {};
+          showInAppToast(notif.title, notif.body, payload.data && payload.data.screen);
+        });
+      }
+    } catch (e) {
+      console.warn('Notification setup failed:', e);
+      hideNotifPrompt();
+    }
+  };
+
+  // Toggle notifications off (rest day or permanent disable)
+  window.toggleRestDay = async function() {
+    if (!currentUser) return;
+    const btn = document.getElementById('rest-day-btn');
+    const until = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    await setDoc(doc(db, `users/${currentUser.uid}/profile/data`), {
+      restDayUntil: until
+    }, { merge: true });
+    if (btn) {
+      btn.textContent = 'Rest day set — notifications paused until tomorrow';
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+    }
+  };
+
+  window.disableNotifications = async function() {
+    if (!currentUser) return;
+    await setDoc(doc(db, `users/${currentUser.uid}/profile/data`), {
+      notifEnabled: false,
+      fcmToken: ''
+    }, { merge: true });
+    showNotifSettingsDisabled();
+  };
+
+  window.enableNotifications = async function() {
+    await requestNotificationPermission();
+  };
+
+  function hideNotifPrompt() {
+    const el = document.getElementById('notif-prompt-card');
+    if (el) el.style.display = 'none';
+  }
+
+  function showNotifSettingsActive() {
+    const off = document.getElementById('notif-settings-off');
+    const on = document.getElementById('notif-settings-on');
+    if (off) off.style.display = 'none';
+    if (on) on.style.display = 'block';
+  }
+
+  function showNotifSettingsDisabled() {
+    const off = document.getElementById('notif-settings-off');
+    const on = document.getElementById('notif-settings-on');
+    if (off) off.style.display = 'block';
+    if (on) on.style.display = 'none';
+  }
+
+  // In-app toast for foreground messages
+  function showInAppToast(title, body, screen) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      max-width: 360px; width: calc(100% - 40px);
+      background: var(--warm-white); border-radius: var(--radius-sm);
+      box-shadow: 0 8px 32px rgba(26,20,16,0.18); padding: 14px 16px;
+      z-index: 9999; cursor: pointer; border-left: 3px solid var(--saffron);
+      animation: slideDown 0.3s ease;
+    `;
+    toast.innerHTML = `
+      <div style="font-size:13px;font-weight:600;color:var(--saffron-deep);margin-bottom:4px;">${title || 'Sakhaa'}</div>
+      <div style="font-size:14px;color:var(--text-primary);line-height:1.5;">${body || ''}</div>
+    `;
+    if (screen) toast.onclick = () => { showScreen(`screen-${screen}`); toast.remove(); };
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
+  }
+
+  // Check on load if notifications are already granted — restore token if needed
+  async function initNotifState() {
+    if (!messaging || !currentUser || !userProfile) return;
+
+    // Show/hide settings based on current state
+    if (Notification.permission === 'granted' && userProfile.notifEnabled !== false) {
+      showNotifSettingsActive();
+    } else {
+      showNotifSettingsDisabled();
+    }
+
+    // Check rest day state for the button
+    if (userProfile.restDayUntil) {
+      const until = userProfile.restDayUntil.toDate ? userProfile.restDayUntil.toDate() : new Date(userProfile.restDayUntil);
+      if (until > new Date()) {
+        const btn = document.getElementById('rest-day-btn');
+        if (btn) {
+          btn.textContent = 'Rest day set — notifications paused until tomorrow';
+          btn.disabled = true;
+          btn.style.opacity = '0.6';
+        }
+      }
+    }
+  }
+  window.initNotifState = initNotifState;
+
+  // Handle notification click when app was closed (URL param)
+  const urlScreen = new URLSearchParams(window.location.search).get('screen');
+  if (urlScreen) {
+    // Will be resolved after auth + profile load in init flow
+    window._notifTargetScreen = urlScreen;
+  }
+
+  // Listen for messages from firebase-messaging-sw.js (notification click)
+  navigator.serviceWorker && navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data && event.data.type === 'NOTIFICATION_CLICK' && event.data.screen) {
+      showScreen(`screen-${event.data.screen}`);
+    }
+  });
   Object.defineProperty(window, 'currentPooja', {
     get: () => currentPooja,
     set: v => { currentPooja = v; }
@@ -3624,6 +3932,11 @@ For this Ask Anything response:
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
+      // firebase-messaging-sw.js is registered on-demand in requestNotificationPermission()
+      // Pre-register here so it's ready before permission is granted
+      if ('Notification' in window && Notification.permission === 'granted') {
+        navigator.serviceWorker.register('/firebase-messaging-sw.js').catch(() => {});
+      }
     });
   }
 </script>

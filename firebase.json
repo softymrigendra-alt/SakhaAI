@@ -8,7 +8,8 @@
       "CLAUDE.md",
       "README.md",
       "Sakhaa_*.md",
-      "node_modules/**"
+      "node_modules/**",
+      "functions/**"
     ],
     "rewrites": [
       { "source": "**", "destination": "/index.html" }
@@ -17,7 +18,15 @@
       {
         "source": "/sw.js",
         "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      },
+      {
+        "source": "/firebase-messaging-sw.js",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
       }
     ]
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20"
   }
 }
