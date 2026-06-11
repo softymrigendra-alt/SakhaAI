@@ -2848,7 +2848,13 @@ I'll be right here when you're ready to talk about anything else.`;
         // Sync notification settings UI
         initNotifState();
       } else {
+        // New Google user — show onboard to collect name & age
         hideLoading();
+        // Pre-fill name from Google profile if available
+        const displayName = currentUser.displayName || '';
+        const firstName = displayName.split(' ')[0];
+        const nameInput = document.getElementById('onboard-name');
+        if (nameInput && firstName) nameInput.value = firstName;
         showScreen('screen-onboard');
       }
     } catch (e) {
@@ -2913,10 +2919,21 @@ I'll be right here when you're ready to talk about anything else.`;
   // ─── GOOGLE SIGN IN ───
   window.signInWithGoogle = async function() {
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      // For new Google users: pre-fill name from Google profile
+      const displayName = result.user.displayName || '';
+      const firstName = displayName.split(' ')[0];
+      const nameInput = document.getElementById('onboard-name');
+      if (nameInput && firstName) nameInput.value = firstName;
     } catch (e) {
-      showToast('Something went quiet — try again');
-      console.warn('Google sign-in failed:', e);
+      if (e.code === 'auth/popup-blocked') {
+        showToast('Allow the sign-in popup in your browser and try again');
+      } else if (e.code === 'auth/popup-closed-by-user') {
+        // user closed popup — do nothing
+      } else {
+        showToast('Something went quiet — try again');
+      }
+      console.warn('Google sign-in failed:', e.code, e.message);
     }
   };
 
@@ -2932,8 +2949,11 @@ I'll be right here when you're ready to talk about anything else.`;
     userName = name;
 
     try {
-      const userCred = await signInAnonymously(auth);
-      currentUser = userCred.user;
+      // If already signed in via Google, skip anonymous sign-in
+      if (!currentUser) {
+        const userCred = await signInAnonymously(auth);
+        currentUser = userCred.user;
+      }
       const mode = detectMode(selectedAgeRange);
       await setDoc(doc(db, 'users', currentUser.uid, 'profile', 'data'), {
         name: userName,
@@ -2943,13 +2963,14 @@ I'll be right here when you're ready to talk about anything else.`;
         appMode: mode,
         createdAt: serverTimestamp()
       });
+      userProfile = { name: userName, karmaPoints: 0, karmaStreak: 0, ageRange: selectedAgeRange || 'unknown', appMode: mode };
       applyMode(mode);
       if (mode === 'dharma') applyDharmaStrings();
       showScreen('screen-gate');
       updateGateGreeting();
     } catch (e) {
       showToast('Something went quiet — try again');
-      console.warn('Anon sign-in failed:', e);
+      console.warn('Onboard failed:', e.code, e.message);
     }
   };
 
