@@ -2027,7 +2027,7 @@
       </div>
     </div>
     <div class="home-body">
-      <!-- Panchang strip — always visible, taps to full screen -->
+      <!-- Panchang strip — position set by applyMode() -->
       <div class="panchang-strip" onclick="openPanchang('home')" id="home-panchang-strip" style="display:none;">
         <div class="panchang-strip-left">
           <div class="panchang-strip-label">🗓 Today's Panchang</div>
@@ -2038,7 +2038,7 @@
       </div>
 
       <!-- Karma bar -->
-      <div class="karma-section">
+      <div class="karma-section" id="karma-section">
         <div class="karma-flame">🔥</div>
         <div class="karma-info">
           <div class="karma-label">Karma Streak</div>
@@ -4279,9 +4279,30 @@ For this Ask Anything response:
       if (panchaangNavBtn) panchaangNavBtn.style.display = 'none';
     }
 
-    // Always show Panchang strip on home
+    // Position & style Panchang strip based on mode
     const strip = document.getElementById('home-panchang-strip');
-    if (strip) strip.style.display = 'flex';
+    const karmaSection = document.getElementById('karma-section');
+    const homeBody = document.querySelector('.home-body');
+    if (strip && homeBody && karmaSection) {
+      strip.style.display = 'flex';
+      if (mode === 'dharma') {
+        // Top of home — prominent, full size
+        homeBody.insertBefore(strip, homeBody.firstChild);
+        strip.style.margin = '0 20px 16px';
+        strip.style.padding = '16px 18px';
+      } else {
+        // Below karma bar — compact, lower visual weight
+        karmaSection.insertAdjacentElement('afterend', strip);
+        strip.style.margin = '12px 20px 4px';
+        strip.style.padding = '10px 14px';
+        strip.style.background = 'var(--gold-light)';
+        strip.style.boxShadow = 'none';
+        const label = strip.querySelector('.panchang-strip-label');
+        if (label) label.style.fontSize = '10px';
+        const tithi = strip.querySelector('.panchang-strip-tithi');
+        if (tithi) tithi.style.fontSize = '15px';
+      }
+    }
 
     // Compute and render Panchang data
     renderPanchang();
@@ -4388,9 +4409,8 @@ For this Ask Anything response:
     const now = new Date();
     const p = computePanchang(now);
 
-    // Home strip
+    // Home strip (display already set by applyMode)
     const strip = document.getElementById('home-panchang-strip');
-    if (strip) strip.style.display = 'flex';
     const el = id => document.getElementById(id);
     if (el('strip-tithi')) el('strip-tithi').textContent = `${TITHIS[p.tithiIdx]} · ${p.paksha}`;
     if (el('strip-nakshatra')) {
