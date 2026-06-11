@@ -1,0 +1,3632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#C8763A" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Sakhaa" />
+  <meta name="description" content="Your sacred friend. Wisdom for the moments that matter." />
+
+  <title>Sakhaa — सखा</title>
+
+  <!-- PWA Manifest (inline via link to manifest.json) -->
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── DESIGN SYSTEM ─── */
+    :root {
+      --saffron: #C8763A;
+      --saffron-light: #F5E6D3;
+      --saffron-deep: #8B4F1E;
+      --gold: #D4A843;
+      --gold-light: #FAF3E0;
+      --indigo: #3D3580;
+      --indigo-light: #EEEDF8;
+      --sage: #5C7A5E;
+      --sage-light: #EAF0EA;
+      --cream: #FAF7F2;
+      --warm-white: #FFFDF9;
+      --text-primary: #1A1410;
+      --text-secondary: #6B5B4E;
+      --text-tertiary: #A89080;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+      --radius: 20px;
+      --radius-sm: 12px;
+      --radius-pill: 100px;
+      --shadow: 0 4px 24px rgba(26, 20, 16, 0.08);
+      --shadow-sm: 0 2px 12px rgba(26, 20, 16, 0.06);
+    }
+
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--cream);
+      color: var(--text-primary);
+      height: 100%;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── APP SHELL ─── */
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      max-width: 480px;
+      margin: 0 auto;
+      position: relative;
+      background: var(--cream);
+    }
+
+    /* ─── SCREENS ─── */
+    .screen {
+      display: none;
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 80px; /* space for bottom nav */
+      -webkit-overflow-scrolling: touch;
+    }
+    .screen.active { display: flex; flex-direction: column; }
+    .screen.fullscreen { padding-bottom: 0; }
+
+    /* ─── BOTTOM NAV ─── */
+    #bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      background: var(--warm-white);
+      border-top: 1px solid rgba(200, 118, 58, 0.12);
+      display: flex;
+      align-items: stretch;
+      z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    #bottom-nav.hidden { display: none; }
+
+    .nav-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 4px 8px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      gap: 4px;
+      transition: color 0.2s;
+      color: var(--text-tertiary);
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-tab.active { color: var(--saffron); }
+    .nav-tab svg { width: 22px; height: 22px; }
+
+    /* ─── ONBOARDING SCREEN ─── */
+    #screen-onboard {
+      background: linear-gradient(160deg, #FAF7F2 0%, #F5E6D3 50%, #FAF3E0 100%);
+      align-items: center;
+      justify-content: center;
+      padding: 40px 32px;
+      padding-bottom: 40px;
+      min-height: 100dvh;
+    }
+
+    .onboard-om {
+      font-family: var(--font-serif);
+      font-size: 72px;
+      color: var(--saffron);
+      opacity: 0.18;
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .onboard-content {
+      text-align: center;
+      z-index: 1;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .onboard-logo {
+      font-family: var(--font-serif);
+      font-size: 48px;
+      font-weight: 500;
+      color: var(--saffron-deep);
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .onboard-devanagari {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      color: var(--saffron);
+      opacity: 0.7;
+      margin-bottom: 28px;
+    }
+
+    .onboard-tagline {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-style: italic;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 48px;
+    }
+
+    .onboard-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-align: left;
+      margin-bottom: 8px;
+    }
+
+    .onboard-input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 1.5px solid rgba(200, 118, 58, 0.25);
+      border-radius: var(--radius);
+      background: var(--warm-white);
+      font-family: var(--font-sans);
+      font-size: 17px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 16px;
+    }
+    .onboard-input:focus { border-color: var(--saffron); }
+    .onboard-input::placeholder { color: var(--text-tertiary); }
+
+    .onboard-note {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    /* ─── BUTTONS ─── */
+    .btn-primary {
+      width: 100%;
+      padding: 17px 24px;
+      background: var(--saffron);
+      color: white;
+      border: none;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-primary:active { transform: scale(0.98); background: var(--saffron-deep); }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 15px 24px;
+      background: transparent;
+      color: var(--saffron);
+      border: 1.5px solid var(--saffron);
+      border-radius: var(--radius-pill);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-secondary:active { background: var(--saffron-light); }
+
+    .btn-ghost {
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 8px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ─── AUTH OPTIONS ─── */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+      color: var(--text-tertiary);
+      font-size: 13px;
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(200, 118, 58, 0.15);
+    }
+
+    .btn-google {
+      width: 100%;
+      padding: 15px 24px;
+      background: var(--warm-white);
+      color: var(--text-primary);
+      border: 1.5px solid rgba(26, 20, 16, 0.1);
+      border-radius: var(--radius-pill);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-google:active { background: #f5f5f5; }
+
+    /* ─── HOME SCREEN ─── */
+    #screen-home {
+      background: var(--cream);
+    }
+
+    .home-header {
+      padding: 56px 24px 20px;
+      background: linear-gradient(180deg, var(--saffron-light) 0%, var(--cream) 100%);
+    }
+
+    .home-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .home-share-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--warm-white);
+      border: 1px solid rgba(200, 118, 58, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-top: 4px;
+      box-shadow: var(--shadow-sm);
+      transition: background 0.2s;
+    }
+
+    .home-share-btn:active { background: var(--saffron-light); }
+
+    .home-greeting {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.3;
+      margin-bottom: 4px;
+    }
+
+    .home-date {
+      font-size: 13px;
+      color: var(--text-tertiary);
+    }
+
+    .home-mood-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--warm-white);
+      border: 1px solid rgba(200, 118, 58, 0.2);
+      border-radius: var(--radius-pill);
+      padding: 6px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 12px;
+      cursor: pointer;
+    }
+
+    .home-body { padding: 0 20px 24px; }
+
+    .card {
+      background: var(--warm-white);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 10px;
+    }
+
+    .verse-text {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-style: italic;
+      color: var(--text-primary);
+      line-height: 1.55;
+      margin-bottom: 8px;
+    }
+
+    .verse-ref {
+      font-size: 12px;
+      color: var(--saffron);
+      font-weight: 500;
+    }
+
+    /* ─── KARMA BAR ─── */
+    .karma-section {
+      background: var(--warm-white);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .karma-flame {
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .karma-info { flex: 1; }
+
+    .karma-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 4px;
+    }
+
+    .karma-bar-wrap {
+      background: var(--saffron-light);
+      border-radius: var(--radius-pill);
+      height: 6px;
+      overflow: hidden;
+    }
+
+    .karma-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--saffron), var(--gold));
+      border-radius: var(--radius-pill);
+      transition: width 0.6s ease;
+    }
+
+    .karma-points {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--saffron-deep);
+      margin-bottom: 6px;
+    }
+
+    /* ─── KARMA ACTIONS ─── */
+    .karma-actions-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+
+    .karma-action-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--saffron-light);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+    }
+
+    .karma-action-item:hover:not(.done) {
+      background: #EDD9C2;
+      transform: translateX(2px);
+    }
+
+    .karma-action-item.done {
+      opacity: 0.65;
+      cursor: default;
+      background: var(--sage-light);
+    }
+
+    .karma-action-icon { font-size: 20px; flex-shrink: 0; }
+
+    .karma-action-text {
+      flex: 1;
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .karma-action-points {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--saffron);
+      background: rgba(200, 118, 58, 0.12);
+      padding: 3px 9px;
+      border-radius: 100px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .karma-action-points.done {
+      color: var(--sage);
+      background: rgba(92, 122, 94, 0.15);
+    }
+
+    /* ─── SAARTHI SCREEN ─── */
+    #screen-saarthi {
+      background: var(--cream);
+    }
+
+    .chat-header {
+      padding: 56px 24px 16px;
+      background: var(--warm-white);
+      border-bottom: 1px solid rgba(200, 118, 58, 0.1);
+      flex-shrink: 0;
+    }
+
+    .chat-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .chat-subtitle {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .chat-bubble {
+      max-width: 82%;
+      padding: 14px 18px;
+      border-radius: 18px;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .chat-bubble.ai {
+      background: var(--warm-white);
+      color: var(--text-primary);
+      border-bottom-left-radius: 4px;
+      align-self: flex-start;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .chat-bubble.user {
+      background: var(--indigo);
+      color: white;
+      border-bottom-right-radius: 4px;
+      align-self: flex-end;
+    }
+
+    .chat-suggestions {
+      padding: 0 16px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .suggestion-chip {
+      background: var(--indigo-light);
+      color: var(--indigo);
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 8px 16px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s;
+    }
+    .suggestion-chip:active { background: #d8d6f0; }
+
+    .chat-input-wrap {
+      padding: 12px 16px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
+      background: var(--warm-white);
+      border-top: 1px solid rgba(200, 118, 58, 0.1);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: var(--cream);
+      border: 1.5px solid rgba(200, 118, 58, 0.2);
+      border-radius: var(--radius);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      color: var(--text-primary);
+      outline: none;
+      resize: none;
+      max-height: 120px;
+      line-height: 1.4;
+      transition: border-color 0.2s;
+    }
+    .chat-input:focus { border-color: var(--saffron); }
+    .chat-input::placeholder { color: var(--text-tertiary); }
+
+    .chat-send {
+      width: 44px;
+      height: 44px;
+      background: var(--saffron);
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .chat-send:active { background: var(--saffron-deep); }
+    .chat-send svg { width: 18px; height: 18px; color: white; }
+
+    /* typing indicator */
+    .typing-indicator {
+      display: flex;
+      gap: 5px;
+      padding: 14px 18px;
+      background: var(--warm-white);
+      border-radius: 18px;
+      border-bottom-left-radius: 4px;
+      align-self: flex-start;
+      box-shadow: var(--shadow-sm);
+    }
+    .typing-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--text-tertiary);
+      border-radius: 50%;
+      animation: typingBounce 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); }
+    }
+
+    /* ─── WISDOM SCREEN ─── */
+    #screen-wisdom {
+      background: var(--cream);
+    }
+
+    .screen-header {
+      padding: 56px 24px 20px;
+      background: linear-gradient(180deg, var(--indigo-light) 0%, var(--cream) 100%);
+    }
+
+    .screen-title {
+      font-family: var(--font-serif);
+      font-size: 30px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .screen-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .screen-body { padding: 0 20px 24px; }
+
+    .wisdom-input-wrap {
+      background: var(--warm-white);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .wisdom-input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      color: var(--text-primary);
+      outline: none;
+    }
+    .wisdom-input::placeholder { color: var(--text-tertiary); }
+
+    .wisdom-question-btn {
+      width: 100%;
+      text-align: left;
+      background: var(--saffron-light);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 14px;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: background 0.15s;
+      line-height: 1.4;
+    }
+    .wisdom-question-btn:hover { background: #EDD9C2; }
+
+    .wisdom-response-card {
+      background: linear-gradient(135deg, var(--warm-white) 0%, #FEFBF7 100%);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      border-left: 3px solid var(--saffron);
+    }
+
+    .wisdom-response-question {
+      font-size: 13px;
+      color: var(--saffron-deep);
+      font-weight: 600;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .wisdom-response-text {
+      font-size: 15px;
+      line-height: 1.75;
+      color: var(--text-primary);
+    }
+
+    /* ─── PRACTICE SCREEN ─── */
+    #screen-practice {
+      background: var(--cream);
+    }
+    #screen-practice .screen-header {
+      background: linear-gradient(180deg, var(--sage-light) 0%, var(--cream) 100%);
+    }
+
+    .practice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 0 20px 24px;
+    }
+
+    .practice-card {
+      background: var(--warm-white);
+      border-radius: var(--radius);
+      padding: 20px 16px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s;
+    }
+    .practice-card:active { transform: scale(0.97); }
+
+    .practice-icon { font-size: 28px; margin-bottom: 10px; }
+
+    .practice-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .practice-desc {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      line-height: 1.4;
+    }
+
+    /* ─── JOURNEY SCREEN ─── */
+    #screen-journey {
+      background: var(--cream);
+    }
+    #screen-journey .screen-header {
+      background: linear-gradient(180deg, var(--gold-light) 0%, var(--cream) 100%);
+    }
+
+    .streak-card {
+      background: linear-gradient(135deg, var(--saffron) 0%, var(--gold) 100%);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin: 0 20px 16px;
+      color: white;
+      text-align: center;
+    }
+
+    .streak-number {
+      font-family: var(--font-serif);
+      font-size: 56px;
+      font-weight: 500;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .streak-label {
+      font-size: 13px;
+      opacity: 0.85;
+      font-weight: 500;
+    }
+
+    /* ─── POOJA SCREEN ─── */
+    #screen-pooja { background: var(--cream); }
+
+    .pooja-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 56px 24px 20px;
+      background: var(--warm-white);
+      border-bottom: 1px solid rgba(92, 122, 94, 0.1);
+    }
+
+    .pooja-back {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-family: var(--font-sans);
+    }
+
+    .pooja-title {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .pooja-step-badge {
+      font-size: 11px;
+      color: var(--sage);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .material-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(200, 118, 58, 0.08);
+    }
+    .material-item:last-child { border-bottom: none; }
+
+    .material-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .material-dot.required { background: var(--saffron); }
+    .material-dot.optional { background: var(--text-tertiary); }
+
+    .pooja-step-card {
+      background: var(--warm-white);
+      border-radius: var(--radius);
+      padding: 22px 20px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pooja-step-title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      line-height: 1.35;
+    }
+
+    .pooja-step-instruction {
+      font-size: 15px;
+      line-height: 1.75;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+    }
+
+    .pooja-sanskrit {
+      background: var(--saffron-light);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+
+    .pooja-sanskrit-text {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      font-style: italic;
+      color: var(--saffron-deep);
+      margin-bottom: 2px;
+    }
+
+    .pooja-transliteration {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .pooja-why {
+      background: var(--indigo-light);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--indigo);
+      border-left: 2px solid var(--indigo);
+    }
+
+    .pooja-nav {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .pooja-nav-back {
+      flex: 0 0 auto;
+      background: var(--warm-white);
+      border: 1px solid var(--saffron-light);
+      color: var(--text-secondary);
+      border-radius: var(--radius-pill);
+      padding: 14px 20px;
+      font-size: 14px;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .pooja-nav-back:hover { background: var(--saffron-light); }
+
+    /* ─── JOURNAL SCREEN ─── */
+    #screen-journal { background: var(--cream); }
+
+    .journal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 56px 24px 20px;
+      background: var(--warm-white);
+      border-bottom: 1px solid rgba(200, 118, 58, 0.08);
+    }
+
+    .journal-back {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-family: var(--font-sans);
+    }
+
+    .journal-step-dots { display: flex; gap: 6px; align-items: center; }
+
+    .journal-dot {
+      height: 7px;
+      border-radius: 100px;
+      background: var(--saffron-light);
+      transition: background 0.25s, width 0.25s;
+      width: 7px;
+    }
+    .journal-dot.active { background: var(--saffron); width: 20px; }
+
+    .journal-mood-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .journal-mood-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 14px 6px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: var(--warm-white);
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      color: var(--text-secondary);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .journal-mood-btn span:first-child { font-size: 22px; }
+    .journal-mood-btn:hover, .journal-mood-btn.selected {
+      background: var(--saffron-light);
+      transform: translateY(-2px);
+    }
+
+    .journal-textarea {
+      width: 100%;
+      border: none;
+      background: var(--warm-white);
+      border-radius: var(--radius);
+      padding: 16px;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      color: var(--text-primary);
+      resize: none;
+      outline: none;
+      box-shadow: var(--shadow-sm);
+      line-height: 1.65;
+      box-sizing: border-box;
+    }
+    .journal-textarea::placeholder { color: var(--text-tertiary); }
+
+    .journal-struggle-options { display: flex; flex-direction: column; gap: 8px; }
+
+    .struggle-btn {
+      width: 100%;
+      text-align: left;
+      padding: 14px 16px;
+      border: 2px solid var(--saffron-light);
+      border-radius: var(--radius-sm);
+      background: var(--warm-white);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .struggle-btn.selected {
+      background: var(--indigo-light);
+      border-color: var(--indigo);
+      color: var(--indigo);
+    }
+
+    .sleep-prep-btn {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--warm-white);
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      text-align: left;
+      width: 100%;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s;
+    }
+    .sleep-prep-btn:hover { background: var(--saffron-light); }
+
+    /* ─── GATE SCREEN ─── */
+    #screen-gate {
+      background: linear-gradient(160deg, #FFF8F0 0%, #F5E6D3 40%, #EDE8F5 100%);
+      align-items: center;
+      justify-content: center;
+      padding: 40px 28px;
+      min-height: 100dvh;
+      padding-bottom: 40px;
+    }
+
+    .gate-om {
+      font-size: 88px;
+      opacity: 0.08;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -60%);
+      pointer-events: none;
+      user-select: none;
+      color: var(--saffron-deep);
+    }
+
+    .gate-content {
+      z-index: 1;
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+    }
+
+    .gate-greeting {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .gate-date {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .gate-yesterday {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.6);
+      border-radius: var(--radius-pill);
+      padding: 5px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+    }
+
+    .gate-question {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .mood-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .mood-btn {
+      background: var(--warm-white);
+      border: 1.5px solid rgba(200, 118, 58, 0.15);
+      border-radius: var(--radius);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: all 0.2s;
+      font-family: var(--font-sans);
+    }
+    .mood-btn:active, .mood-btn.selected {
+      border-color: var(--saffron);
+      background: var(--saffron-light);
+    }
+
+    .mood-emoji { font-size: 28px; line-height: 1; }
+
+    .mood-label {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .mood-sublabel {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+
+    /* ─── SUBGATE SCREENS ─── */
+    #screen-subgate-unhappy, #screen-subgate-neutral {
+      background: linear-gradient(160deg, #FFF8F0 0%, #F5E6D3 60%, #FAF7F2 100%);
+      padding: 56px 24px 40px;
+    }
+
+    .subgate-back {
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 32px;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .subgate-question {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+
+    .subgate-note {
+      font-size: 14px;
+      color: var(--text-tertiary);
+      margin-bottom: 32px;
+    }
+
+    .subgate-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .subgate-option {
+      background: var(--warm-white);
+      border: 1.5px solid rgba(200, 118, 58, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      color: var(--text-primary);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .subgate-option:active, .subgate-option.selected {
+      border-color: var(--saffron);
+      background: var(--saffron-light);
+    }
+
+    /* ─── RESPONSE SCREEN ─── */
+    #screen-response {
+      background: var(--cream);
+    }
+
+    .response-header {
+      padding: 52px 24px 20px;
+      background: linear-gradient(180deg, var(--saffron-light) 0%, var(--cream) 100%);
+    }
+
+    .response-mood-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .response-title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .response-karma-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, var(--gold-light), #FFF8DC);
+      border: 1px solid var(--gold);
+      border-radius: var(--radius-pill);
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--saffron-deep);
+      margin-top: 12px;
+    }
+
+    .response-body {
+      padding: 0 24px 40px;
+    }
+
+    .response-card {
+      background: var(--warm-white);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      border-left: 3px solid var(--saffron);
+    }
+
+    .response-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--saffron);
+      margin-bottom: 12px;
+    }
+
+    .response-text {
+      font-size: 16px;
+      color: var(--text-primary);
+      line-height: 1.65;
+    }
+
+    .response-actions {
+      margin-top: 24px;
+    }
+
+    .response-action-label {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .action-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .action-chip {
+      background: var(--saffron-light);
+      color: var(--saffron-deep);
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 10px 18px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ─── LOADING OVERLAY ─── */
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--cream);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.4s;
+    }
+    #loading-overlay.hidden { opacity: 0; pointer-events: none; }
+
+    .loading-logo {
+      font-family: var(--font-serif);
+      font-size: 42px;
+      font-weight: 500;
+      color: var(--saffron-deep);
+      margin-bottom: 8px;
+    }
+
+    .loading-devanagari {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      color: var(--saffron);
+      opacity: 0.6;
+      margin-bottom: 36px;
+    }
+
+    .loading-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .loading-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--saffron);
+      border-radius: 50%;
+      animation: typingBounce 1.2s ease-in-out infinite;
+    }
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    /* ─── TOAST ─── */
+    #toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--text-primary);
+      color: white;
+      padding: 12px 24px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 1000;
+      opacity: 0;
+      transition: all 0.3s;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ─── UTILITIES ─── */
+    .text-center { text-align: center; }
+    .mt-8 { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .mt-24 { margin-top: 24px; }
+    .hidden { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .screen.active > * { animation: fadeInUp 0.35s ease forwards; }
+
+    /* ─── KARMA PULSE ─── */
+    @keyframes karmaPlus {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-40px) scale(1.3); }
+    }
+    .karma-plus {
+      position: fixed;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold);
+      pointer-events: none;
+      z-index: 999;
+      animation: karmaPlus 1s ease forwards;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── LOADING OVERLAY ─── -->
+<div id="loading-overlay">
+  <div class="loading-logo">Sakhaa</div>
+  <div class="loading-devanagari">सखा</div>
+  <div class="loading-dots">
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+    <div class="loading-dot"></div>
+  </div>
+</div>
+
+<!-- ─── TOAST ─── -->
+<div id="toast"></div>
+
+<!-- ─── APP ─── -->
+<div id="app">
+
+  <!-- ── ONBOARDING ── -->
+  <div id="screen-onboard" class="screen fullscreen active">
+    <div class="onboard-om">ॐ</div>
+    <div class="onboard-content">
+      <div class="onboard-logo">Sakhaa</div>
+      <div class="onboard-devanagari">सखा</div>
+      <div class="onboard-tagline">Your sacred friend.<br/>Wisdom for the moments that matter.</div>
+
+      <div class="onboard-label">What should Sakhaa call you?</div>
+      <input
+        id="onboard-name"
+        class="onboard-input"
+        type="text"
+        placeholder="Your first name"
+        autocomplete="given-name"
+        maxlength="40"
+      />
+      <div class="onboard-note">Just your name — nothing else needed to begin.</div>
+
+      <button class="btn-primary" onclick="handleOnboardContinue()">
+        Meet Sakhaa →
+      </button>
+
+      <div class="auth-divider">or sign in to save your journey</div>
+
+      <button class="btn-google" onclick="signInWithGoogle()">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+          <path d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.96L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+    </div>
+  </div>
+
+  <!-- ── HAPPINESS GATE ── -->
+  <div id="screen-gate" class="screen fullscreen">
+    <div class="gate-om">ॐ</div>
+    <div class="gate-content">
+      <div id="gate-date" class="gate-date"></div>
+      <div id="gate-greeting" class="gate-greeting">Namaste, Friend</div>
+      <div id="gate-yesterday" class="gate-yesterday hidden"></div>
+      <div id="gate-question" class="gate-question">How are you feeling right now?</div>
+      <div class="mood-options">
+        <button class="mood-btn" onclick="selectMood('happy')">
+          <span class="mood-emoji">☀️</span>
+          <div>
+            <div class="mood-label">Good</div>
+            <div class="mood-sublabel">Feeling clear, content, or grateful</div>
+          </div>
+        </button>
+        <button class="mood-btn" onclick="selectMood('neutral')">
+          <span class="mood-emoji">🌤️</span>
+          <div>
+            <div class="mood-label">So-so</div>
+            <div class="mood-sublabel">Just going through the motions</div>
+          </div>
+        </button>
+        <button class="mood-btn" onclick="selectMood('unhappy')">
+          <span class="mood-emoji">🌧️</span>
+          <div>
+            <div class="mood-label">Not great</div>
+            <div class="mood-sublabel">Heavy, worried, or off today</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SUBGATE — UNHAPPY ── -->
+  <div id="screen-subgate-unhappy" class="screen fullscreen">
+    <button class="subgate-back" onclick="showScreen('screen-gate')">
+      ← Back
+    </button>
+    <div class="subgate-question">What's weighing on you?</div>
+    <div class="subgate-note">No right answers. Just tell me.</div>
+    <div class="subgate-options" id="unhappy-options">
+      <button class="subgate-option" onclick="selectStressSource('work')">Work or career pressure</button>
+      <button class="subgate-option" onclick="selectStressSource('relationships')">Relationships or family</button>
+      <button class="subgate-option" onclick="selectStressSource('health')">Health or body</button>
+      <button class="subgate-option" onclick="selectStressSource('finances')">Money or finances</button>
+      <button class="subgate-option" onclick="selectStressSource('purpose')">Feeling lost or purposeless</button>
+      <button class="subgate-option" onclick="selectStressSource('other')">Something I can't name yet</button>
+    </div>
+  </div>
+
+  <!-- ── SUBGATE — NEUTRAL ── -->
+  <div id="screen-subgate-neutral" class="screen fullscreen">
+    <button class="subgate-back" onclick="showScreen('screen-gate')">
+      ← Back
+    </button>
+    <div class="subgate-question">What describes it best?</div>
+    <div class="subgate-note">It's okay not to know.</div>
+    <div class="subgate-options">
+      <button class="subgate-option" onclick="selectStressSource('tired')">Just tired</button>
+      <button class="subgate-option" onclick="selectStressSource('distracted')">Distracted or restless</button>
+      <button class="subgate-option" onclick="selectStressSource('numb')">A little numb or flat</button>
+      <button class="subgate-option" onclick="selectStressSource('routine')">Nothing specific — just routine</button>
+    </div>
+  </div>
+
+  <!-- ── AI GATE RESPONSE ── -->
+  <div id="screen-response" class="screen fullscreen">
+    <div class="response-header">
+      <div id="response-mood-tag" class="response-mood-tag"></div>
+      <div class="response-title">Sakhaa for you</div>
+      <div id="response-karma-pill" class="response-karma-pill hidden">✨ +15 karma — for showing up today</div>
+    </div>
+    <div class="response-body">
+      <div class="response-card">
+        <div class="response-label">From your sacred friend</div>
+        <div id="response-text" class="response-text">
+          Sakhaa is thinking…
+        </div>
+      </div>
+      <div class="response-actions">
+        <div class="response-action-label">What would help right now?</div>
+        <div id="response-action-chips" class="action-chips">
+          <!-- populated by JS based on mood -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HOME ── -->
+  <div id="screen-home" class="screen">
+    <div class="home-header">
+      <div class="home-header-top">
+        <div>
+          <div id="home-greeting" class="home-greeting">Good morning, Friend</div>
+          <div id="home-date" class="home-date"></div>
+        </div>
+        <button class="home-share-btn" onclick="shareApp()" aria-label="Share Sakhaa">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--saffron)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+        </button>
+      </div>
+      <div class="home-mood-pill" onclick="showScreen('screen-gate')">
+        <span id="home-mood-emoji">🌤️</span>
+        <span id="home-mood-label">Update mood</span>
+      </div>
+    </div>
+    <div class="home-body">
+      <!-- Karma bar -->
+      <div class="karma-section">
+        <div class="karma-flame">🔥</div>
+        <div class="karma-info">
+          <div class="karma-label">Karma Streak</div>
+          <div class="karma-points" id="karma-points-display">0 points</div>
+          <div class="karma-bar-wrap">
+            <div class="karma-bar-fill" id="karma-bar" style="width: 0%"></div>
+          </div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 22px; font-weight: 700; color: var(--gold);" id="streak-days">0</div>
+          <div style="font-size: 10px; color: var(--text-tertiary); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;">days</div>
+        </div>
+      </div>
+
+      <!-- Mood-responsive content (verse, karma actions, saarthi invite) -->
+      <div id="home-mood-content"></div>
+    </div>
+  </div>
+
+  <!-- ── SAARTHI (AI CHAT) ── -->
+  <div id="screen-saarthi" class="screen">
+    <div class="chat-header">
+      <div class="chat-title">Saarthi</div>
+      <div class="chat-subtitle">Your sacred guide — always beside you</div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <!-- Messages populated by JS -->
+    </div>
+    <div class="chat-suggestions" id="chat-suggestions">
+      <button class="suggestion-chip" onclick="sendSuggestion('I need some guidance today')">I need guidance</button>
+      <button class="suggestion-chip" onclick="sendSuggestion('What does the Gita say about my situation?')">Ask the Gita</button>
+      <button class="suggestion-chip" onclick="sendSuggestion(&quot;I'm feeling overwhelmed&quot;)">I'm overwhelmed</button>
+    </div>
+    <div class="chat-input-wrap">
+      <textarea
+        id="chat-input"
+        class="chat-input"
+        placeholder="Talk to Sakhaa…"
+        rows="1"
+        onkeydown="handleChatKeydown(event)"
+        oninput="autoResizeTextarea(this)"
+      ></textarea>
+      <button class="chat-send" onclick="sendChatMessage()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── WISDOM ── -->
+  <div id="screen-wisdom" class="screen">
+    <div class="screen-header">
+      <div class="screen-title">Ask Anything</div>
+      <div class="screen-subtitle">Seriously, anything. No question is too small.</div>
+    </div>
+    <div class="screen-body">
+      <div class="wisdom-input-wrap">
+        <input
+          id="wisdom-input"
+          class="wisdom-input"
+          type="text"
+          placeholder="What's on your mind?"
+          onkeydown="if(event.key==='Enter') askWisdom()"
+        />
+        <button onclick="askWisdom()" style="background: none; border: none; color: var(--saffron); cursor: pointer; padding: 4px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- AI response (hidden until question asked) -->
+      <div id="wisdom-response-area" class="hidden">
+        <div class="wisdom-response-card">
+          <div class="wisdom-response-question" id="wisdom-response-question"></div>
+          <div class="wisdom-response-text" id="wisdom-response-text">Sakhaa is thinking…</div>
+        </div>
+        <div id="wisdom-related-wrap" class="card hidden">
+          <div class="card-label">Keep exploring</div>
+          <div id="wisdom-related" style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;"></div>
+        </div>
+      </div>
+
+      <!-- Popular questions (hidden while response showing) -->
+      <div id="popular-questions-wrap" class="card">
+        <div class="card-label">People often ask…</div>
+        <div id="popular-questions" style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px; margin-bottom: 60px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PRACTICE ── -->
+  <div id="screen-practice" class="screen">
+    <div class="screen-header">
+      <div class="screen-title">Practice</div>
+      <div class="screen-subtitle">Simple paths back to yourself</div>
+    </div>
+    <div class="practice-grid">
+      <div class="practice-card" onclick="beginPooja('morning_aarti')">
+        <div class="practice-icon">🙏</div>
+        <div class="practice-name">Morning Aarti</div>
+        <div class="practice-desc">Daily · 10 min</div>
+      </div>
+      <div class="practice-card" onclick="beginPooja('ganesh_pooja')">
+        <div class="practice-icon">🐘</div>
+        <div class="practice-name">Ganesh Pooja</div>
+        <div class="practice-desc">New beginnings · 20 min</div>
+      </div>
+      <div class="practice-card" onclick="beginPooja('lakshmi_pooja')">
+        <div class="practice-icon">🌸</div>
+        <div class="practice-name">Lakshmi Pooja</div>
+        <div class="practice-desc">Thursdays · 25 min</div>
+      </div>
+      <div class="practice-card" onclick="beginPooja('shiva_pooja')">
+        <div class="practice-icon">🕉️</div>
+        <div class="practice-name">Shiva Pooja</div>
+        <div class="practice-desc">Mondays · 20 min</div>
+      </div>
+      <div class="practice-card" onclick="beginPooja('saraswati_pooja')">
+        <div class="practice-icon">📚</div>
+        <div class="practice-name">Saraswati Pooja</div>
+        <div class="practice-desc">Learning & wisdom · 20 min</div>
+      </div>
+      <div class="practice-card" onclick="beginPooja('satyanarayan_pooja')">
+        <div class="practice-icon">🌕</div>
+        <div class="practice-name">Satyanarayan Pooja</div>
+        <div class="practice-desc">Full moon · 30 min</div>
+      </div>
+      <div class="practice-card" onclick="beginPooja('navratri_daily')">
+        <div class="practice-icon">🪔</div>
+        <div class="practice-name">Navratri Daily</div>
+        <div class="practice-desc">9 nights · 20 min</div>
+      </div>
+      <div class="practice-card" onclick="beginPooja('diwali_pooja')">
+        <div class="practice-icon">✨</div>
+        <div class="practice-name">Diwali Pooja</div>
+        <div class="practice-desc">Amavasya evening · 30 min</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── JOURNEY ── -->
+  <div id="screen-journey" class="screen">
+    <div class="screen-header">
+      <div class="screen-title">Your Journey</div>
+      <div class="screen-subtitle">Every day of showing up matters</div>
+    </div>
+
+    <div class="streak-card">
+      <div class="streak-number" id="journey-streak">0</div>
+      <div class="streak-label">day streak 🔥</div>
+    </div>
+
+    <div style="padding: 0 20px;">
+      <div class="card">
+        <div class="card-label">Karma points</div>
+        <div style="font-family: var(--font-serif); font-size: 40px; font-weight: 500; color: var(--saffron-deep); margin: 8px 0 4px;" id="journey-karma">0</div>
+        <div style="font-size: 13px; color: var(--text-tertiary);">Keep showing up. Every action adds up.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Mood this week</div>
+        <div id="mood-chart" style="display: flex; gap: 8px; align-items: flex-end; height: 60px; margin-top: 8px;">
+          <!-- Populated by JS -->
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 6px;">
+          <span style="font-size: 11px; color: var(--text-tertiary);">Mon</span>
+          <span style="font-size: 11px; color: var(--text-tertiary);">Tue</span>
+          <span style="font-size: 11px; color: var(--text-tertiary);">Wed</span>
+          <span style="font-size: 11px; color: var(--text-tertiary);">Thu</span>
+          <span style="font-size: 11px; color: var(--text-tertiary);">Fri</span>
+          <span style="font-size: 11px; color: var(--text-tertiary);">Sat</span>
+          <span style="font-size: 11px; color: var(--text-tertiary);">Sun</span>
+        </div>
+      </div>
+
+      <!-- Evening reflection CTA -->
+      <div id="journal-cta-card" class="card" style="background: linear-gradient(135deg, var(--gold-light) 0%, #FFF8EC 100%); cursor: pointer;" onclick="startJournal()">
+        <div class="card-label" style="color: var(--gold);">Evening reflection</div>
+        <div style="font-size: 16px; color: var(--text-primary); line-height: 1.5; margin-bottom: 16px;">
+          Take 5 minutes to close the day with intention.
+        </div>
+        <button class="btn-primary" style="font-size: 14px; padding: 12px 20px;">Begin reflection →</button>
+      </div>
+
+      <!-- Sakhaa's weekly insight (hidden until generated) -->
+      <div id="journey-insight" class="card hidden" style="margin-bottom: 100px;">
+        <div class="card-label" style="color: var(--indigo);">Sakhaa notices</div>
+        <div id="journey-insight-text" style="font-size: 15px; line-height: 1.7; color: var(--text-primary);"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── POOJA GUIDE ── -->
+  <div id="screen-pooja" class="screen">
+    <div class="pooja-header">
+      <button class="pooja-back" onclick="switchTab('practice')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Practice
+      </button>
+      <div id="pooja-header-title" class="pooja-title"></div>
+      <div id="pooja-step-badge" class="pooja-step-badge"></div>
+    </div>
+    <div id="pooja-content" style="padding: 20px 20px 100px;">
+      <!-- Rendered by JS -->
+    </div>
+  </div>
+
+  <!-- ── JOURNAL (NIGHT REFLECTION) ── -->
+  <div id="screen-journal" class="screen">
+    <div class="journal-header">
+      <button class="journal-back" onclick="switchTab('journey')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Journey
+      </button>
+      <div id="journal-step-indicator" class="journal-step-dots"></div>
+    </div>
+    <div id="journal-step-content" style="padding: 24px 24px 100px;">
+      <!-- Step content rendered by JS -->
+    </div>
+  </div>
+
+  <!-- ─── BOTTOM NAV ─── -->
+  <nav id="bottom-nav" class="hidden">
+    <button class="nav-tab" data-tab="home" onclick="switchTab('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      Home
+    </button>
+    <button class="nav-tab" data-tab="saarthi" onclick="switchTab('saarthi')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      Saarthi
+    </button>
+    <button class="nav-tab" data-tab="wisdom" onclick="switchTab('wisdom')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+      Wisdom
+    </button>
+    <button class="nav-tab" data-tab="practice" onclick="switchTab('practice')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      </svg>
+      Practice
+    </button>
+    <button class="nav-tab" data-tab="journey" onclick="switchTab('journey')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+        <polyline points="17 6 23 6 23 12"></polyline>
+      </svg>
+      Journey
+    </button>
+  </nav>
+
+</div><!-- /#app -->
+
+<!-- ─── FIREBASE ─── -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+  import {
+    getAuth,
+    signInWithPopup,
+    signInAnonymously,
+    GoogleAuthProvider,
+    onAuthStateChanged,
+    signOut
+  } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+  import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc,
+    addDoc,
+    collection,
+    serverTimestamp,
+    query,
+    orderBy,
+    limit,
+    getDocs
+  } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+  // ─── CONFIG ─── (replace these values with your Firebase project)
+  const CONFIG = {
+    groqApiKey: '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',
+    geminiApiKey: 'AQ.Ab8RN6Ls1aVaSTjeO-HAriBot4-4Ppf_a8-xoEZ8z5Y2UtcRwA',
+    firebase: {
+       apiKey: "AIzaSyB4m6-Ym-UAcNYw93ysMc0bF_L-Aadze_c",
+       authDomain: "sakhaa-ai.firebaseapp.com",
+       projectId: "sakhaa-ai",
+       storageBucket: "sakhaa-ai.firebasestorage.app",
+       messagingSenderId: "856090989479",
+       appId: "1:856090989479:web:494fdc4ae8831de4349c82"
+    }
+  };
+
+  // ─── FIREBASE INIT ───
+  const app = initializeApp(CONFIG.firebase);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  // ─── STATE ───
+  let userName = 'Friend';
+  let currentMood = 'neutral';
+  let stressSource = '';
+  let currentTab = 'home';
+  let karmaPoints = 0;
+  let karmaStreak = 0;
+  let currentUser = null;
+  let userProfile = null;
+  let gateHistory = [];
+  let fullConversationHistory = [];
+  let saarthiInitialized = false;
+  let conversationLoaded = false;
+  let journalStep = 0;
+  let journalData = {};
+  let currentPooja = null;
+  let poojaStep = 0;
+  let poojaSimplified = false;
+
+  // ─── GITA VERSES (mood-tagged) ───
+  const GITA_VERSES = [
+    { text: "Whatever is glorious, beautiful, or powerful — know it springs from a spark of my radiance.", ref: "Bhagavad Gita · 10.41", mood: ['happy'] },
+    { text: "To those who are ever devoted and worship me with love, I carry what they lack and preserve what they have.", ref: "Bhagavad Gita · 9.22", mood: ['happy'] },
+    { text: "One who sees equality everywhere — in joy or in sorrow — is a perfect yogi.", ref: "Bhagavad Gita · 6.32", mood: ['happy'] },
+    { text: "Nothing in this world purifies like wisdom. One who is perfected in practice finds this within.", ref: "Bhagavad Gita · 4.38", mood: ['happy', 'neutral'] },
+    { text: "If one offers me a leaf, a flower, fruit, or water with devotion — I accept that heartfelt offering.", ref: "Bhagavad Gita · 9.26", mood: ['happy', 'neutral'] },
+    { text: "To those who are devoted to me and always remember me, I give the understanding by which they can reach me.", ref: "Bhagavad Gita · 10.10", mood: ['happy', 'neutral'] },
+    { text: "Do not yield to weakness. Rise. This does not become you.", ref: "Bhagavad Gita · 2.3", mood: ['unhappy'] },
+    { text: "Sensations of heat and cold, pleasure and pain — they come and go, impermanent. Bear them with patience.", ref: "Bhagavad Gita · 2.14", mood: ['unhappy'] },
+    { text: "Abandon all varieties of dharma and surrender to me alone. I will deliver you from all difficulty. Do not fear.", ref: "Bhagavad Gita · 18.66", mood: ['unhappy'] },
+    { text: "One must elevate oneself by the self — never degrade the self. For the self is both friend and enemy.", ref: "Bhagavad Gita · 6.5", mood: ['unhappy'] },
+    { text: "As a lamp in a windless place does not flicker — so is the steadiness of one who has quieted the mind.", ref: "Bhagavad Gita · 6.19", mood: ['unhappy', 'neutral'] },
+    { text: "One who hates none, who is friendly and compassionate to all — such a devotee is very dear to me.", ref: "Bhagavad Gita · 12.13", mood: ['unhappy'] },
+    { text: "The soul is never cut, never burned, never wetted, never dried. It is eternal, all-pervading, unchanged.", ref: "Bhagavad Gita · 2.24", mood: ['unhappy'] },
+    { text: "You have a right to perform your duty, but never to the fruits of action. Let not the fruits be the motive, nor be attached to inaction.", ref: "Bhagavad Gita · 2.47", mood: ['unhappy', 'neutral'] },
+    { text: "Therefore, always do your duty without attachment. By doing so, one attains the Supreme.", ref: "Bhagavad Gita · 3.19", mood: ['neutral'] },
+    { text: "Yoga is skill in action. Seek refuge in wisdom. Those who work only for results are to be pitied.", ref: "Bhagavad Gita · 2.50", mood: ['neutral'] },
+    { text: "Seeing the same Lord dwelling equally in all beings, one does not harm the self — and reaches the highest destination.", ref: "Bhagavad Gita · 13.28", mood: ['neutral'] },
+    { text: "The yogis act with body, mind, and intellect — relinquishing attachment — for the purification of the self.", ref: "Bhagavad Gita · 5.11", mood: ['neutral'] },
+    { text: "Whenever righteousness declines and unrighteousness rises, I manifest myself. Age after age I appear.", ref: "Bhagavad Gita · 4.7", mood: ['neutral'] },
+    { text: "One who is not disturbed even in the midst of the threefold miseries — who is not elated when there is happiness — is a sage of steady mind.", ref: "Bhagavad Gita · 2.56", mood: ['neutral', 'unhappy'] }
+  ];
+
+  // ─── KARMA ACTIONS (mood-specific) ───
+  const KARMA_ACTIONS = {
+    happy: [
+      { id: 'ka_express_gratitude', label: 'Tell someone you appreciate them today', icon: '💛', points: 10 },
+      { id: 'ka_help_someone', label: 'Do one kind thing for someone around you', icon: '🤝', points: 15 },
+      { id: 'ka_share_joy', label: 'Share what made you smile with a friend', icon: '☀️', points: 10 },
+      { id: 'ka_journal_win', label: 'Write down one thing that is going well', icon: '✍️', points: 5 }
+    ],
+    unhappy: [
+      { id: 'ka_breathe', label: 'Take 3 slow, deep breaths right now', icon: '🌬️', points: 5 },
+      { id: 'ka_one_step', label: 'Do one tiny thing — just one small thing', icon: '👣', points: 10 },
+      { id: 'ka_self_compassion', label: 'Say something kind to yourself out loud', icon: '🫂', points: 10 },
+      { id: 'ka_reach_out', label: 'Reach out to one person who cares about you', icon: '📱', points: 15 }
+    ],
+    neutral: [
+      { id: 'ka_set_intention', label: 'Set one clear intention for today', icon: '🎯', points: 5 },
+      { id: 'ka_mindful_moment', label: 'Take 5 minutes just for yourself', icon: '🧘', points: 10 },
+      { id: 'ka_learn_something', label: 'Read or learn something new today', icon: '📚', points: 10 },
+      { id: 'ka_connect', label: 'Genuinely connect with someone today', icon: '🤍', points: 15 }
+    ]
+  };
+
+  // ─── POOJA GUIDES ───
+  const POOJA_GUIDES = [
+    {
+      id: 'morning_aarti', name: 'Morning Aarti', icon: '🙏',
+      duration: '10 min', duration_simplified: '5 min',
+      occasion: 'Daily morning practice',
+      materials: [
+        { item: 'Diya or candle', optional: false },
+        { item: 'Incense (agarbatti)', optional: true },
+        { item: 'Flowers or tulsi leaves', optional: true }
+      ],
+      steps: [
+        { title: 'Cleanse yourself', instruction: 'Wash your hands and face. Come to the space with clean body and clear intention.', why: 'External cleanliness prepares the internal state. It signals to the mind: this time is different.' },
+        { title: 'Light the diya', instruction: 'Light your lamp or candle. Hold it in both hands briefly before placing it.', why: 'The diya represents the light of consciousness — Atman. Lighting it symbolises awakening your inner light.', sanskrit: 'Deepam jyoti parabrahma', transliteration: 'The lamp-light is the Supreme Brahman' },
+        { title: 'Light incense', instruction: 'Light the incense if you have it. Let the smoke rise freely.', why: 'Incense purifies the atmosphere and represents prayers ascending.', optional: true },
+        { title: 'Offer flowers or leaves', instruction: 'Place flowers or tulsi leaves near the murti. Offer with both hands.', why: 'Each offering represents something from nature returning to the divine.', optional: true },
+        { title: 'Aarti', instruction: 'Move the diya in a clockwise circle before the deity, three to seven times. Chant "Om" or any aarti you know.', why: 'The circular motion represents the cycle of life. The light illuminates the divine form.', sanskrit: 'Om Jai Jagdish Hare' },
+        { title: 'Bow and close', instruction: 'Bow in gratitude. Sit quietly for a minute before returning to your day.', why: 'The quiet moment at the end allows the sacred quality to settle into you.' }
+      ],
+      simplified_steps: [
+        { title: 'Light the diya', instruction: 'Light a lamp or candle. Hold it in both hands for a moment.' },
+        { title: 'Chant three times', instruction: 'Chant "Om" three times slowly.', sanskrit: 'Om Om Om' },
+        { title: 'Offer and bow', instruction: 'Offer a leaf or flower. Bow in gratitude. Sit quietly for one minute.' }
+      ]
+    },
+    {
+      id: 'ganesh_pooja', name: 'Ganesh Pooja', icon: '🐘',
+      duration: '20 min', duration_simplified: '10 min',
+      occasion: 'Before any new beginning',
+      materials: [
+        { item: 'Ganesh murti or image', optional: false },
+        { item: 'Red flowers (hibiscus)', optional: true },
+        { item: 'Modak or any sweet', optional: true },
+        { item: 'Diya and incense', optional: true }
+      ],
+      steps: [
+        { title: 'Purify the space', instruction: 'Sprinkle a few drops of water around the space. Wash your hands. Take three slow breaths.', why: 'Pooja begins before the first mantra. Space, mind, and body are prepared together.' },
+        { title: 'Invoke Ganesha', instruction: 'Place the murti. Join your palms and say "Om Ganeshaya Namah" three times.', why: 'Ganesha is invoked first in any pooja — he removes obstacles and blesses all beginnings.', sanskrit: 'Om Ganeshaya Namah', transliteration: 'Salutation to Lord Ganesha' },
+        { title: 'Offer flowers', instruction: 'Offer red or white flowers at the feet of Ganesha.', why: 'Red is Ganesha\'s favourite colour. The offering is a gesture of love, not transaction.' },
+        { title: 'Light diya and incense', instruction: 'Light the lamp and incense. Move the incense in three circles before the murti.', why: 'The five senses are engaged in worship. This is called Panchopachar — five forms of service.' },
+        { title: 'Offer modak', instruction: 'Place modak or any sweet before Ganesha. Even a substitute is accepted with love.', why: 'Modak represents divine bliss. Ganesha\'s love for it is a teaching: seek what is truly sweet.', sanskrit: 'Om Gam Ganapataye Namah' },
+        { title: 'Aarti', instruction: 'Move the diya clockwise before Ganesha. Chant or hum Ganapati Aarti.', why: 'Aarti is when we offer our vision itself to the divine.' },
+        { title: 'Bow and sit', instruction: 'Bow deeply. Sit in silence for a few minutes.', why: 'The bow is surrender. The silence that follows is where the pooja truly happens.' }
+      ],
+      simplified_steps: [
+        { title: 'Invoke', instruction: 'Chant "Om Ganeshaya Namah" three times.', sanskrit: 'Om Ganeshaya Namah' },
+        { title: 'Offer', instruction: 'Place a flower or leaf at the feet of Ganesha.' },
+        { title: 'Light', instruction: 'Light a diya or candle. Move it in a circle before the image.' },
+        { title: 'Bow', instruction: 'Bow deeply. State your intention for the new beginning. Sit quietly for two minutes.' }
+      ]
+    },
+    {
+      id: 'lakshmi_pooja', name: 'Lakshmi Pooja', icon: '🌸',
+      duration: '25 min', duration_simplified: '10 min',
+      occasion: 'Thursday evenings or Fridays',
+      materials: [
+        { item: 'Lakshmi murti or image', optional: false },
+        { item: 'Lotus or pink flowers', optional: true },
+        { item: 'Kumkum (red powder)', optional: true },
+        { item: 'Diya and incense', optional: true }
+      ],
+      steps: [
+        { title: 'Clean and light', instruction: 'Clean the area. Place a clean cloth. Light a lamp — Lakshmi is invited by light.', why: 'Lakshmi does not enter where there is darkness or disorder. Cleaning is a statement of readiness.' },
+        { title: 'Invoke Ganesha first', instruction: 'Chant "Om Ganeshaya Namah" three times. Every pooja begins with Ganesha.', why: 'Ganesha removes the obstacles that prevent the divine from entering.', sanskrit: 'Om Ganeshaya Namah' },
+        { title: 'Welcome Lakshmi', instruction: 'Chant "Om Shreem Mahalakshmiyai Namah" three times. Visualise Lakshmi seated on a lotus.', why: 'Lakshmi is not summoned — she is welcomed. The mantra is an invitation offered with genuine receptivity.', sanskrit: 'Om Shreem Mahalakshmiyai Namah', transliteration: 'Salutation to the great Lakshmi' },
+        { title: 'Offer flowers and kumkum', instruction: 'Place pink or white flowers. Apply a small dot of kumkum to the image.', why: 'Kumkum represents Shakti. The offering connects you to the divine feminine energy.' },
+        { title: 'Place coins', instruction: 'Place a few coins near the murti as a symbolic offering. Offer in gratitude for what you already have — not as a request.', why: 'This is the central teaching of Lakshmi Pooja. It is not transactional. It expresses gratitude for abundance already present.' },
+        { title: 'Aarti', instruction: 'Perform aarti — move the diya clockwise, seven times if possible.', why: 'Seven represents completeness — the full cycle.', sanskrit: 'Om Jai Lakshmi Mata' },
+        { title: 'Bow and sit', instruction: 'Bow. Sit quietly for 5 minutes without asking for anything.', why: 'The most powerful Lakshmi Pooja ends in stillness. Abundance already exists — the pooja is learning to perceive it.' }
+      ],
+      simplified_steps: [
+        { title: 'Invite with light', instruction: 'Light a diya. Clean the space briefly.' },
+        { title: 'Chant', instruction: 'Chant "Om Shreem Mahalakshmiyai Namah" seven times.', sanskrit: 'Om Shreem Mahalakshmiyai Namah' },
+        { title: 'Offer with gratitude', instruction: 'Place a flower or coin. Say three things you are grateful for.' },
+        { title: 'Bow and be still', instruction: 'Bow. Sit quietly for two minutes. Receive.' }
+      ]
+    },
+    {
+      id: 'shiva_pooja', name: 'Shiva Pooja', icon: '🕉️',
+      duration: '20 min', duration_simplified: '10 min',
+      occasion: 'Mondays, Mahashivratri',
+      materials: [
+        { item: 'Shivalinga or image of Shiva', optional: false },
+        { item: 'Water or milk for abhishek', optional: false },
+        { item: 'Bilva (bel) leaves', optional: true },
+        { item: 'Vibhuti (sacred ash)', optional: true }
+      ],
+      steps: [
+        { title: 'Purify', instruction: 'Wash your hands. Sprinkle water around the space. Take a few deep breaths.', why: 'Shiva represents pure consciousness. Preparation is inward as much as outward.' },
+        { title: 'Abhishek — pour water or milk', instruction: 'Pour water or milk slowly over the Shivalinga while chanting "Om Namah Shivaya". Do this with full attention.', why: 'Abhishek represents cooling the divine. Shiva bears the heat of the universe so we do not have to.', sanskrit: 'Om Namah Shivaya', transliteration: 'Salutation to Shiva' },
+        { title: 'Offer bilva leaves', instruction: 'Offer bilva leaves in sets of three. Each set of three represents Sat (truth), Chit (consciousness), Ananda (bliss).', why: 'The three-lobed bilva leaf is Shiva\'s most beloved offering. It represents the three states of consciousness.', optional: true },
+        { title: 'Apply vibhuti', instruction: 'Apply sacred ash in three horizontal lines on your forehead.', why: 'Vibhuti is ash — the reminder that the body is temporary. Knowing impermanence frees us from attachment.', optional: true },
+        { title: 'Chant Panchakshara', instruction: 'Chant "Om Namah Shivaya" 108 times (or as many as you can). Use a mala if you have one.', why: 'Na-Ma-Shi-Va-Ya maps to the five elements: earth, water, fire, air, space.', sanskrit: 'Om Namah Shivaya' },
+        { title: 'Sit in silence', instruction: 'After chanting, sit in complete silence for at least 5 minutes.', why: 'Shiva is the lord of meditation. After the outer pooja, the inner pooja begins.' }
+      ],
+      simplified_steps: [
+        { title: 'Abhishek', instruction: 'Pour water while chanting "Om Namah Shivaya" 11 times.', sanskrit: 'Om Namah Shivaya' },
+        { title: 'Offer', instruction: 'Place three bilva leaves or any leaves in sets of three.' },
+        { title: 'Chant', instruction: 'Chant "Om Namah Shivaya" 27 times with closed eyes.' },
+        { title: 'Sit', instruction: 'Sit in complete silence for 5 minutes.' }
+      ]
+    },
+    {
+      id: 'saraswati_pooja', name: 'Saraswati Pooja', icon: '📚',
+      duration: '20 min', duration_simplified: '10 min',
+      occasion: 'Basant Panchami, before exams or learning',
+      materials: [
+        { item: 'Saraswati image or books as proxy', optional: false },
+        { item: 'White or yellow flowers', optional: true },
+        { item: 'Books or instruments to bless', optional: true },
+        { item: 'Diya and incense', optional: true }
+      ],
+      steps: [
+        { title: 'Place books and tools', instruction: 'Place your books, instruments, or tools of learning near the image. You are asking for wisdom to flow through these.', why: 'Saraswati blesses the intention. Placing your tools here says: "May wisdom flow through this work."' },
+        { title: 'Invoke Ganesha', instruction: 'Chant "Om Ganeshaya Namah" three times first.', why: 'Ganesha removes obstacles to learning — the confusion, the distraction, the self-doubt.', sanskrit: 'Om Ganeshaya Namah' },
+        { title: 'Welcome Saraswati', instruction: 'Chant "Om Aim Saraswatyai Namah" three times. Visualise Saraswati with her veena, dressed in white.', why: 'The bija mantra "Aim" activates intellect and speech. It is the seed of knowledge.', sanskrit: 'Om Aim Saraswatyai Namah', transliteration: 'Salutation to Saraswati' },
+        { title: 'Offer white flowers', instruction: 'Offer white or yellow flowers. Jasmine is especially beloved by Saraswati.', why: 'White represents purity of mind — the quality Saraswati requires for wisdom to flow.' },
+        { title: 'Aarti', instruction: 'Light the diya. Move it clockwise. Chant the Saraswati aarti.', why: 'Aarti before Saraswati is an offering of attention — the most important quality for learning.' },
+        { title: 'Sit and learn', instruction: 'After the pooja, open one blessed book and read even one page with full attention.', why: 'Saraswati is honoured most by the act of paying genuine attention. The pooja is incomplete without this.' }
+      ],
+      simplified_steps: [
+        { title: 'Place your books', instruction: 'Place your books near the image. Say: "May wisdom flow through this."' },
+        { title: 'Chant', instruction: 'Chant "Om Aim Saraswatyai Namah" 21 times.', sanskrit: 'Om Aim Saraswatyai Namah' },
+        { title: 'Offer and bow', instruction: 'Offer a flower or leaf. Bow in humility.' },
+        { title: 'Learn', instruction: 'Read one page of something you are studying. This completes the pooja.' }
+      ]
+    },
+    {
+      id: 'satyanarayan_pooja', name: 'Satyanarayan Pooja', icon: '🌕',
+      duration: '30 min', duration_simplified: '15 min',
+      occasion: 'Full moon, gratitude occasions',
+      materials: [
+        { item: 'Vishnu or Satyanarayan image', optional: false },
+        { item: 'Tulsi leaves', optional: false },
+        { item: 'Panchamrit (milk, curd, honey, ghee, sugar)', optional: true },
+        { item: 'Yellow flowers', optional: true }
+      ],
+      steps: [
+        { title: 'Invoke Ganesha and Kalash', instruction: 'Fill a small pot with water. Place leaves and a coconut on top. Chant "Om Ganeshaya Namah" three times.', why: 'The kalash is a microcosm of the universe. Water (life), leaves (nature), coconut (the three divine aspects).', sanskrit: 'Om Ganeshaya Namah' },
+        { title: 'Welcome Satyanarayan', instruction: 'Chant "Om Namo Bhagavate Vasudevaya" three times facing the image.', why: 'This 12-syllable mantra of Vishnu is an acknowledgment: the divine pervades everything.', sanskrit: 'Om Namo Bhagavate Vasudevaya', transliteration: 'Salutation to the Supreme Lord Vasudeva' },
+        { title: 'Abhishek', instruction: 'Pour panchamrit (or water) slowly over the image. Then pour clean water to cleanse.', why: 'Abhishek is the act of bathing the divine — an intimate gesture of care and reverence.' },
+        { title: 'Offer tulsi', instruction: 'Offer tulsi leaves in groups of three to five.', why: 'The Shastra says a single tulsi leaf offered with true devotion pleases Vishnu more than a golden throne.' },
+        { title: 'Recall the Katha', instruction: 'Recall or read any story from the Satyanarayan Katha. Even one sentence.', why: 'This pooja is done in gratitude for blessings received — not to ask for more. The Katha reminds us of this.' },
+        { title: 'Aarti and prasad', instruction: 'Perform aarti. Then share prasad (any sweet) with whoever is present.', why: 'Prasad is always shared. In sharing, the blessing multiplies.' },
+        { title: 'Sit in gratitude', instruction: 'Bow. Sit for 5 minutes listing, in your heart, what you are grateful for.', why: 'Someone once received a blessing and wanted to say thank you. That is this pooja. Do the same.' }
+      ],
+      simplified_steps: [
+        { title: 'Chant', instruction: 'Chant "Om Namo Bhagavate Vasudevaya" 12 times.', sanskrit: 'Om Namo Bhagavate Vasudevaya' },
+        { title: 'Offer tulsi', instruction: 'Offer 3–5 tulsi leaves or any leaf.' },
+        { title: 'Give thanks', instruction: 'Think of one specific blessing you are grateful for.' },
+        { title: 'Bow and share', instruction: 'Bow deeply. Share a sweet with someone.' }
+      ]
+    },
+    {
+      id: 'navratri_daily', name: 'Navratri Daily', icon: '🪔',
+      duration: '20 min', duration_simplified: '10 min',
+      occasion: 'During the 9 nights of Navratri',
+      materials: [
+        { item: 'Devi image (Durga/Navdurga)', optional: false },
+        { item: 'Red flowers', optional: true },
+        { item: 'Akhand jyoti or diya', optional: false },
+        { item: 'Incense', optional: true }
+      ],
+      steps: [
+        { title: 'Light the diya', instruction: 'Light the continuous flame or a fresh diya for Devi.', why: 'The continuous flame represents the unbroken nature of the divine feminine. Devi is always present.' },
+        { title: 'Invoke today\'s Devi form', instruction: 'Chant the name of today\'s Navdurga nine times. Day 1: Shailputri · Day 2: Brahmacharini · Day 3: Chandraghanta · Day 4: Kushmanda · Day 5: Skandamata · Day 6: Katyayani · Day 7: Kalaratri · Day 8: Mahagauri · Day 9: Siddhidatri', why: 'The nine forms represent nine qualities of the divine feminine — from grounding to ultimate liberation.' },
+        { title: 'Offer red flowers', instruction: 'Offer red flowers or a red cloth to Devi.', why: 'Red is the colour of Shakti — power, life, creation. Not aggression, but primal creative force.' },
+        { title: 'Chant Durga mantra', instruction: 'Chant "Om Dum Durgayai Namah" 108 times. Or recite one shloka from Durga Saptashati.', why: 'One verse recited with full attention carries more power than 700 recited mechanically.', sanskrit: 'Om Dum Durgayai Namah', transliteration: 'Salutation to Durga' },
+        { title: 'Aarti', instruction: 'Perform aarti for Devi. Sing Jai Ambe Gauri or any Devi aarti.', why: 'During Navratri, millions across India are performing the same aarti tonight. You join that collective.' },
+        { title: 'Sit in her presence', instruction: 'Sit quietly for 5 minutes after the aarti. Ask Devi for the courage you need.', why: 'Navratri is the celebration of Devi destroying that which no longer serves. Ask: what in me needs to be transformed?' }
+      ],
+      simplified_steps: [
+        { title: 'Light a diya', instruction: 'Light a lamp for Devi.' },
+        { title: 'Chant', instruction: 'Chant "Om Dum Durgayai Namah" 27 times.', sanskrit: 'Om Dum Durgayai Namah' },
+        { title: 'Offer red', instruction: 'Offer a red flower or piece of red cloth.' },
+        { title: 'Bow and ask', instruction: 'Bow fully. Ask Devi for the courage you need today.' }
+      ]
+    },
+    {
+      id: 'diwali_pooja', name: 'Diwali Pooja', icon: '✨',
+      duration: '30 min', duration_simplified: '15 min',
+      occasion: 'Diwali evening (Amavasya)',
+      materials: [
+        { item: 'Lakshmi and Ganesha images', optional: false },
+        { item: 'Diyas (several)', optional: false },
+        { item: 'Lotus or marigold flowers', optional: true },
+        { item: 'Sweets for prasad', optional: true }
+      ],
+      steps: [
+        { title: 'Light all the diyas', instruction: 'Light all your diyas and place them around the home — at the entrance, in every room. The home should glow.', why: 'Diwali means "row of lights." Lakshmi is drawn to homes filled with light. Every diya is a welcome.' },
+        { title: 'Invoke Ganesha', instruction: 'Chant "Om Ganeshaya Namah" five times facing the images.', why: 'Every auspicious occasion begins with Ganesha. He clears the path for Lakshmi to enter.', sanskrit: 'Om Ganeshaya Namah' },
+        { title: 'Welcome Lakshmi', instruction: 'Chant "Om Shreem Mahalakshmiyai Namah" 11 times. Visualise Lakshmi entering your home.', why: 'On Amavasya, Lakshmi is believed to visit homes that are clean, lit, and filled with devotion.', sanskrit: 'Om Shreem Mahalakshmiyai Namah' },
+        { title: 'Offer flowers and sweets', instruction: 'Offer lotus or marigold flowers. Place sweets as prasad.', why: 'The offering of sweets represents the sweetness of life. Marigold is the flower of celebration.' },
+        { title: 'Place coins symbolically', instruction: 'Place coins near the image. If you keep accounts, open them now.', why: 'Diwali is the start of the traditional financial year. The books are opened and blessed — a prayer for righteous wealth.' },
+        { title: 'Aarti for both', instruction: 'Perform aarti for both Ganesha and Lakshmi together.', why: 'The joint aarti on Diwali is unique. Wisdom and abundance together — neither alone is complete.' },
+        { title: 'Light a diya at the doorstep', instruction: 'Light one special diya at the threshold and bow there. This is for Lakshmi\'s arrival.', why: 'The threshold is sacred — it is where the outside world meets the home.' },
+        { title: 'Sit and reflect', instruction: 'After the aarti, sit quietly for 5 minutes. What exile has ended for you this year?', why: 'Ram returned from exile on Diwali. Diwali is not just celebration — it is reflection on what has changed.' }
+      ],
+      simplified_steps: [
+        { title: 'Light diyas', instruction: 'Light as many diyas or candles as you have.' },
+        { title: 'Chant', instruction: 'Chant "Om Ganeshaya Namah" and "Om Shreem Mahalakshmiyai Namah" three times each.', sanskrit: 'Om Ganeshaya Namah · Om Shreem Mahalakshmiyai Namah' },
+        { title: 'Offer sweets', instruction: 'Place sweets as prasad. Share them with someone.' },
+        { title: 'Reflect', instruction: 'Sit quietly for 5 minutes. Ask: what this year gave you, and what you are grateful for.' }
+      ]
+    }
+  ];
+
+  // ─── CRISIS DETECTION ─── (NON-NEGOTIABLE)
+  const CRISIS_KEYWORDS = [
+    'suicide', 'suicidal', 'kill myself', 'end my life', 'self harm',
+    'self-harm', "don't want to live", 'want to die', 'end it all',
+    'no reason to live', 'better off dead', 'hurt myself'
+  ];
+
+  function detectCrisis(text) {
+    const lower = text.toLowerCase();
+    return CRISIS_KEYWORDS.some(kw => lower.includes(kw));
+  }
+
+  const CRISIS_RESPONSE = `What you're sharing matters deeply, and I want you to be okay. I'm an AI — I'm not equipped to support you through this the way you deserve. Please reach out to someone who can truly help:
+
+India:
+• iCall: 9152987821
+• AASRA: 9820466627
+• Vandrevala Foundation: 1860-2662-345 (24/7)
+
+Outside India: findahelpline.com
+
+I'll be right here when you're ready to talk about anything else.`;
+
+  async function logCrisisIncident(text) {
+    if (!currentUser) return;
+    try {
+      await addDoc(collection(db, 'crisis_incidents'), {
+        userId: currentUser.uid,
+        message: text,
+        timestamp: serverTimestamp(),
+        reviewed: false
+      });
+    } catch (e) {
+      console.warn('Crisis log failed:', e);
+    }
+  }
+
+  // ─── SCREEN NAVIGATION ───
+  window.showScreen = function(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+
+    const navScreens = ['screen-home', 'screen-saarthi', 'screen-wisdom', 'screen-practice', 'screen-journey'];
+    const nav = document.getElementById('bottom-nav');
+    if (navScreens.includes(id)) {
+      nav.classList.remove('hidden');
+    } else {
+      nav.classList.add('hidden');
+    }
+
+    if (id === 'screen-home') updateHomeScreen();
+    if (id === 'screen-gate') updateGateGreeting();
+    if (id === 'screen-journey') updateJourneyScreen();
+    if (id === 'screen-saarthi' && !saarthiInitialized) initSaarthi();
+    if (id === 'screen-wisdom') renderPopularQuestions();
+  };
+
+  window.switchTab = function(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+    showScreen(`screen-${tab}`);
+  };
+
+  // ─── AUTH STATE ───
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      await loadUserProfile(user.uid);
+    } else {
+      hideLoading();
+      showScreen('screen-onboard');
+    }
+  });
+
+  async function loadUserProfile(uid) {
+    try {
+      const snap = await getDoc(doc(db, 'users', uid, 'profile', 'data'));
+      if (snap.exists()) {
+        userProfile = snap.data();
+        userName = userProfile.name || 'Friend';
+        karmaPoints = userProfile.karmaPoints || 0;
+        karmaStreak = userProfile.karmaStreak || 0;
+        await loadGateHistory(uid);
+        hideLoading();
+
+        // Skip gate if already completed today
+        const todaySnap = await getDoc(doc(db, 'users', uid, 'gate_session', 'today'));
+        const today = new Date().toISOString().split('T')[0];
+        if (todaySnap.exists() && todaySnap.data().date === today) {
+          const saved = todaySnap.data();
+          currentMood = saved.mood || 'neutral';
+          stressSource = saved.stressSource || '';
+          switchTab('home');
+        } else {
+          showScreen('screen-gate');
+          updateGateGreeting();
+        }
+      } else {
+        hideLoading();
+        showScreen('screen-onboard');
+      }
+    } catch (e) {
+      console.warn('Profile load failed:', e);
+      hideLoading();
+      showScreen('screen-onboard');
+    }
+  }
+
+  async function loadGateHistory(uid) {
+    try {
+      const q = query(
+        collection(db, 'users', uid, 'gate_history'),
+        orderBy('timestamp', 'desc'),
+        limit(7)
+      );
+      const snap = await getDocs(q);
+      gateHistory = snap.docs.map(d => d.data());
+    } catch (e) {
+      console.warn('Gate history load failed:', e);
+    }
+  }
+
+  async function saveUserProfile() {
+    if (!currentUser) return;
+    try {
+      await setDoc(doc(db, 'users', currentUser.uid, 'profile', 'data'), {
+        name: userName,
+        karmaPoints,
+        karmaStreak,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    } catch (e) {
+      console.warn('Profile save failed:', e);
+    }
+  }
+
+  async function saveGateSession() {
+    const today = new Date().toISOString().split('T')[0];
+    const data = { date: today, mood: currentMood, stressSource };
+
+    // Update in-memory history and streak for new gate entries
+    if (!gateHistory.find(g => g.date === today)) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+      const hadYesterday = gateHistory.find(g => g.date === yesterdayStr);
+      karmaStreak = (karmaStreak === 0 || hadYesterday) ? karmaStreak + 1 : 1;
+      saveUserProfile();
+      gateHistory.unshift(data);
+    }
+
+    if (!currentUser) return;
+    try {
+      await setDoc(doc(db, 'users', currentUser.uid, 'gate_session', 'today'), { ...data, timestamp: serverTimestamp() });
+      await addDoc(collection(db, 'users', currentUser.uid, 'gate_history'), { ...data, timestamp: serverTimestamp() });
+    } catch (e) {
+      console.warn('Gate session save failed:', e);
+    }
+  }
+
+  // ─── GOOGLE SIGN IN ───
+  window.signInWithGoogle = async function() {
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      showToast('Something went quiet — try again');
+      console.warn('Google sign-in failed:', e);
+    }
+  };
+
+  // ─── ONBOARDING ───
+  window.handleOnboardContinue = async function() {
+    const nameInput = document.getElementById('onboard-name');
+    const name = nameInput.value.trim();
+    if (!name) {
+      nameInput.focus();
+      nameInput.style.borderColor = 'var(--saffron)';
+      return;
+    }
+    userName = name;
+
+    try {
+      const userCred = await signInAnonymously(auth);
+      currentUser = userCred.user;
+      await setDoc(doc(db, 'users', currentUser.uid, 'profile', 'data'), {
+        name: userName,
+        karmaPoints: 0,
+        karmaStreak: 0,
+        createdAt: serverTimestamp()
+      });
+      showScreen('screen-gate');
+      updateGateGreeting();
+    } catch (e) {
+      showToast('Something went quiet — try again');
+      console.warn('Anon sign-in failed:', e);
+    }
+  };
+
+  // ─── GATE FLOW ───
+  function updateGateGreeting() {
+    const greetEl = document.getElementById('gate-greeting');
+    const yesterdayEl = document.getElementById('gate-yesterday');
+    const questionEl = document.getElementById('gate-question');
+    const dateEl = document.getElementById('gate-date');
+
+    const now = new Date();
+    if (dateEl) {
+      dateEl.textContent = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
+    }
+
+    if (gateHistory.length === 0) {
+      greetEl.textContent = `Namaste, ${userName}`;
+      questionEl.textContent = 'How are you feeling right now?';
+      yesterdayEl.classList.add('hidden');
+    } else {
+      const last = gateHistory[0];
+      const moodEmoji = { happy: '☀️', neutral: '🌤️', unhappy: '🌧️' };
+      const moodWord = { happy: 'good', neutral: 'okay', unhappy: 'heavy' };
+      greetEl.textContent = `Welcome back, ${userName}`;
+      yesterdayEl.textContent = `Yesterday you felt ${moodEmoji[last.mood] || '🌤️'} ${moodWord[last.mood] || 'okay'}`;
+      yesterdayEl.classList.remove('hidden');
+      questionEl.textContent = 'How are you feeling today?';
+    }
+  }
+
+  window.selectMood = function(mood) {
+    currentMood = mood;
+    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+    if (typeof event !== 'undefined' && event && event.currentTarget) {
+      event.currentTarget.classList.add('selected');
+    }
+
+    setTimeout(() => {
+      if (mood === 'unhappy') {
+        showScreen('screen-subgate-unhappy');
+      } else if (mood === 'neutral') {
+        showScreen('screen-subgate-neutral');
+      } else {
+        stressSource = '';
+        proceedFromGate();
+      }
+    }, 300);
+  };
+
+  window.selectStressSource = async function(source) {
+    stressSource = source;
+    document.querySelectorAll('.subgate-option').forEach(b => b.classList.remove('selected'));
+    if (typeof event !== 'undefined' && event && event.currentTarget) {
+      event.currentTarget.classList.add('selected');
+    }
+
+    setTimeout(() => proceedFromGate(), 300);
+  };
+
+  async function proceedFromGate() {
+    if (currentMood === 'happy') addKarmaPoints(15);
+    showScreen('screen-response');
+    updateResponseScreen();
+    loadGateResponse();
+    saveGateSession().catch(e => console.warn('Gate session save failed:', e));
+  }
+
+  function updateResponseScreen() {
+    // Karma pill
+    const karmaPill = document.getElementById('response-karma-pill');
+    if (currentMood === 'happy') {
+      karmaPill.classList.remove('hidden');
+    } else {
+      karmaPill.classList.add('hidden');
+    }
+
+    // Mood tag
+    const moodTag = document.getElementById('response-mood-tag');
+    const moodEmoji = { happy: '☀️ Feeling good', neutral: '🌤️ So-so', unhappy: '🌧️ Heavy day' };
+    moodTag.textContent = moodEmoji[currentMood] || '';
+
+    // Mood-specific action chips
+    const chipsEl = document.getElementById('response-action-chips');
+    const chipSets = {
+      happy: [
+        { label: 'Amplify this feeling', action: `goToSaarthi()` },
+        { label: 'Do a karma action', action: `switchTab('home')` },
+        { label: 'Read the Gita', action: `switchTab('wisdom')` },
+        { label: 'Go to home', action: `switchTab('home')` }
+      ],
+      neutral: [
+        { label: 'Talk it through', action: `goToSaarthi()` },
+        { label: 'Set an intention', action: `goToSaarthi()` },
+        { label: 'Find a practice', action: `switchTab('practice')` },
+        { label: 'Go to home', action: `switchTab('home')` }
+      ],
+      unhappy: [
+        { label: 'Talk to Sakhaa', action: `goToSaarthi()` },
+        { label: 'Try a breathing exercise', action: `switchTab('practice')` },
+        { label: 'Ask a question', action: `switchTab('wisdom')` },
+        { label: 'Go to home', action: `switchTab('home')` }
+      ]
+    };
+    const chips = chipSets[currentMood] || chipSets.neutral;
+    chipsEl.innerHTML = chips.map(c =>
+      `<button class="action-chip" onclick="${c.action}">${c.label}</button>`
+    ).join('');
+  }
+
+  async function loadGateResponse() {
+    const el = document.getElementById('response-text');
+    el.textContent = 'Sakhaa is thinking…';
+
+    const systemPrompt = buildSystemPrompt();
+    const moodContext = {
+      happy: `The user is feeling good today${stressSource ? ` (${stressSource})` : ''}. Offer a warm, brief affirmation and suggest how to channel this energy well. Root it in Dharma wisdom. Keep it under 4 sentences.`,
+      neutral: `The user is feeling so-so today${stressSource ? ` — ${stressSource}` : ''}. Acknowledge the mundane without dismissing it. Offer a gentle reframe from the Gita. Keep it under 4 sentences.`,
+      unhappy: `The user is struggling today — the source: ${stressSource || 'unnamed difficulty'}. Validate first, wisdom second. Be warm, not prescriptive. Keep it under 4 sentences.`
+    };
+
+    const messages = [{ role: 'user', content: moodContext[currentMood] }];
+
+    try {
+      const response = await callAI(messages, systemPrompt);
+      el.textContent = response;
+    } catch (e) {
+      el.textContent = 'Something went quiet for a moment — but Sakhaa is here. Take a breath and try again.';
+    }
+  }
+
+  // ─── AI ───
+  function buildSystemPrompt() {
+    let prompt = `You are Sakhaa (सखा), a sacred AI spiritual companion inspired by the friendship of Krishna and Arjuna in the Bhagavad Gita.
+
+Your soul: You are a sacred friend — the sakhaa. Just as Krishna sat beside Arjuna — calm, wise, non-judgmental, present — you sit beside the user. Never above. Always beside.
+
+Your character:
+- Warm and genuinely caring, never clinical or robotic
+- Wise but never preachy — wisdom offered, never imposed
+- Honest but never harsh — truth delivered with love
+- Non-judgmental — no question is too basic, embarrassing, or wrong
+- Rooted in Dharma wisdom (Bhagavad Gita, Upanishads)
+- Honest about being an AI — never claims to be divine
+
+How you speak:
+- Like a close, trusted friend who happens to be deeply wise
+- Plain language — no jargon, no Sanskrit overload
+- Short to medium responses — a friend talks WITH you, not AT you
+- From beside the user, never above them
+
+What you NEVER do:
+- Never preach or lecture
+- Never use fear, guilt, or shame
+- Never make predictions about the future
+- Never diagnose or prescribe anything medical
+- Never say "great question!" — just answer warmly
+- Never be a generic AI assistant — always be the sakhaa
+
+When the user is in distress: validate first, wisdom second, practical help third. Always acknowledge feelings before guidance.
+
+Remember: You are their sacred friend. Speak like one.`;
+
+    // Memory context
+    prompt += `\n\n=== SAKHAA MEMORY ===\nUser: ${userName}\nToday's mood: ${currentMood}`;
+    if (stressSource) prompt += ` (source: ${stressSource})`;
+    prompt += '\n';
+
+    if (gateHistory.length > 1) {
+      const pattern = gateHistory.slice(0, 7).map(g => g.mood).join(', ');
+      prompt += `Recent mood pattern (${gateHistory.length} days): ${pattern}\n`;
+      const sources = [...new Set(gateHistory.filter(g => g.stressSource).map(g => g.stressSource))].join(', ');
+      if (sources) prompt += `Recurring stress: ${sources}\n`;
+    }
+    if (gateHistory.length === 0) {
+      prompt += 'First time using Sakhaa — greet them warmly and gently.\n';
+    } else {
+      prompt += `Days using Sakhaa: ${gateHistory.length}\n`;
+    }
+    prompt += '=== END MEMORY ===';
+
+    return prompt;
+  }
+
+  async function callAI(messages, systemPrompt) {
+    // Primary: Groq
+    try {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${CONFIG.groqApiKey}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          max_tokens: 1024,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...messages
+          ]
+        })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message);
+      return data.choices[0].message.content;
+    } catch (e) {
+      console.warn('Groq failed, trying Gemini:', e);
+      return callGeminiFallback(messages, systemPrompt);
+    }
+  }
+
+  async function callGeminiFallback(messages, systemPrompt) {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${CONFIG.geminiApiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: systemPrompt }] },
+          contents: messages.map(m => ({
+            role: m.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: m.content }]
+          }))
+        })
+      }
+    );
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    return data.candidates[0].content.parts[0].text;
+  }
+
+  // ─── SAARTHI CHAT ───
+  async function initSaarthi() {
+    saarthiInitialized = true;
+
+    // Load conversation history from Firestore first
+    await loadConversationHistory();
+
+    // If history was loaded and rendered, don't add a new greeting
+    if (fullConversationHistory.length > 0) return;
+
+    // New conversation — show personalised opening
+    const greeting = buildSaarthiGreeting();
+    addChatBubble('ai', greeting);
+  }
+
+  async function loadConversationHistory() {
+    if (conversationLoaded || !currentUser) return;
+    conversationLoaded = true;
+
+    try {
+      const q = query(
+        collection(db, 'users', currentUser.uid, 'conversations', 'saarthi', 'messages'),
+        orderBy('timestamp', 'asc'),
+        limit(20)
+      );
+      const snap = await getDocs(q);
+      if (snap.empty) return;
+
+      const messagesEl = document.getElementById('chat-messages');
+      messagesEl.innerHTML = ''; // clear placeholder
+      document.getElementById('chat-suggestions').classList.add('hidden');
+
+      snap.docs.forEach(d => {
+        const msg = d.data();
+        fullConversationHistory.push({ role: msg.role, content: msg.content });
+        addChatBubble(msg.role === 'assistant' ? 'ai' : 'user', msg.content);
+      });
+
+      // Add a short re-engagement message after loaded history
+      const resumeMsg = buildResumeMessage();
+      addChatBubble('ai', resumeMsg);
+      fullConversationHistory.push({ role: 'assistant', content: resumeMsg });
+
+    } catch (e) {
+      console.warn('Conversation load failed:', e);
+    }
+  }
+
+  function buildSaarthiGreeting() {
+    const days = gateHistory.length;
+
+    // Day 1 — first time ever
+    if (days === 0) {
+      return `Namaste, ${userName}. I'm glad you're here. This is a safe space — share anything that's on your mind. There's no wrong way to start.`;
+    }
+
+    // Unhappy today — lead with presence
+    if (currentMood === 'unhappy') {
+      const sourceMap = {
+        work: 'work pressure',
+        relationships: 'what\'s happening with your relationships',
+        health: 'how your body is feeling',
+        finances: 'the financial stress',
+        purpose: 'feeling lost',
+        other: 'what\'s weighing on you'
+      };
+      const topic = sourceMap[stressSource] || 'what\'s weighing on you';
+      // Pattern recognition takes priority — check before day count
+      const recurringStress = gateHistory.filter(g => g.stressSource === stressSource).length;
+      if (recurringStress >= 3) {
+        return `${userName}, I've noticed ${topic} has come up a few times lately. I'm here. What's going on today?`;
+      }
+      if (days <= 1) {
+        return `I'm here, ${userName}. You mentioned ${topic} — I'm listening. Take your time.`;
+      }
+      return `I'm here, ${userName}. You mentioned ${topic} — I'm with you. What would you like to talk about?`;
+    }
+
+    // Happy today
+    if (currentMood === 'happy') {
+      if (days === 1) return `${userName}, it's good to see you feeling well. What's been making today feel good?`;
+      if (days >= 30) return `${userName}, you've been showing up for ${days} days. That's not nothing. What's on your mind today?`;
+      return `Good to see you feeling good, ${userName}. What's on your mind?`;
+    }
+
+    // Neutral / so-so
+    if (days <= 3) {
+      return `Good to see you, ${userName}. How are you really doing today?`;
+    }
+    if (days >= 30) {
+      const pattern = gateHistory.slice(0, 7).map(g => g.mood);
+      const unhappyCount = pattern.filter(m => m === 'unhappy').length;
+      if (unhappyCount >= 3) {
+        return `${userName}, it's been a heavy week. I notice that. What's going on?`;
+      }
+    }
+    return `${userName}, you're here. That means something. What's on your mind today?`;
+  }
+
+  function buildResumeMessage() {
+    const hour = new Date().getHours();
+    const timeGreet = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+    if (currentMood === 'unhappy') {
+      return `Good ${timeGreet}, ${userName}. I'm still here. How are you feeling now?`;
+    }
+    return `Good ${timeGreet}, ${userName}. Good to have you back.`;
+  }
+
+  function addChatBubble(role, text) {
+    const messages = document.getElementById('chat-messages');
+    const bubble = document.createElement('div');
+    bubble.className = `chat-bubble ${role}`;
+    bubble.textContent = text;
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
+    return bubble;
+  }
+
+  function showTypingIndicator() {
+    const messages = document.getElementById('chat-messages');
+    const indicator = document.createElement('div');
+    indicator.className = 'typing-indicator';
+    indicator.id = 'typing-indicator';
+    indicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+    messages.appendChild(indicator);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function removeTypingIndicator() {
+    const el = document.getElementById('typing-indicator');
+    if (el) el.remove();
+  }
+
+  window.sendChatMessage = async function() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    // Crisis check — user message
+    if (detectCrisis(text)) {
+      addChatBubble('user', text);
+      input.value = '';
+      autoResizeTextarea(input);
+      addChatBubble('ai', CRISIS_RESPONSE);
+      await logCrisisIncident(text);
+      document.getElementById('chat-suggestions').classList.add('hidden');
+      return;
+    }
+
+    addChatBubble('user', text);
+    input.value = '';
+    autoResizeTextarea(input);
+    document.getElementById('chat-suggestions').classList.add('hidden');
+
+    fullConversationHistory.push({ role: 'user', content: text });
+
+    showTypingIndicator();
+
+    try {
+      const systemPrompt = buildSystemPrompt();
+      const recentMessages = fullConversationHistory.slice(-20);
+      const aiText = await callAI(recentMessages, systemPrompt);
+
+      removeTypingIndicator();
+
+      // Crisis check — AI response
+      if (detectCrisis(aiText)) {
+        addChatBubble('ai', CRISIS_RESPONSE);
+        return;
+      }
+
+      addChatBubble('ai', aiText);
+      fullConversationHistory.push({ role: 'assistant', content: aiText });
+
+      // Save to Firestore
+      if (currentUser) {
+        const base = collection(db, 'users', currentUser.uid, 'conversations', 'saarthi', 'messages');
+        await addDoc(base, { role: 'user', content: text, timestamp: serverTimestamp() });
+        await addDoc(base, { role: 'assistant', content: aiText, timestamp: serverTimestamp() });
+      }
+    } catch (e) {
+      removeTypingIndicator();
+      addChatBubble('ai', 'Something went quiet for a moment — try again.');
+    }
+  };
+
+  window.sendSuggestion = function(text) {
+    document.getElementById('chat-input').value = text;
+    sendChatMessage();
+  };
+
+  window.handleChatKeydown = function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendChatMessage();
+    }
+  };
+
+  window.autoResizeTextarea = function(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  };
+
+  // ─── WISDOM ───
+  // ─── ASK ANYTHING ───
+  const QA_LIBRARY = [
+    "How do I find peace when life feels chaotic?",
+    "What is the meaning of karma?",
+    "How do I deal with anger?",
+    "What does dharma mean in daily life?",
+    "Why do I feel empty even when everything is fine?",
+    "How do I forgive someone who hurt me?",
+    "What does the Gita say about fear?",
+    "How do I stop worrying about the future?",
+    "Is it okay to feel lost spiritually?",
+    "How do I deal with grief?",
+    "What does detachment actually mean — do I stop caring?",
+    "How do I find my purpose?",
+    "What is the right thing to do when family conflicts with dharma?",
+    "Why do good people suffer?",
+    "How do I quiet my mind?",
+    "What does the Gita say about relationships?",
+    "How do I deal with jealousy?",
+    "Why does prayer sometimes feel hollow?",
+    "How do I balance ambition with contentment?",
+    "What does it mean to act without ego?"
+  ];
+
+  function renderPopularQuestions(keepCurrent) {
+    const container = document.getElementById('popular-questions');
+    if (!container) return;
+    // Pick 6 questions — seeded by today's date for consistency
+    const today = new Date().toISOString().split('T')[0];
+    const seed = today.split('-').reduce((a, b) => a + parseInt(b), 0);
+    const picks = [];
+    for (let i = 0; i < 6; i++) {
+      picks.push(QA_LIBRARY[(seed + i) % QA_LIBRARY.length]);
+    }
+    container.innerHTML = picks.map(q =>
+      `<button class="wisdom-question-btn" onclick="askQuestion('${q.replace(/'/g, "&#39;")}')">${q}</button>`
+    ).join('');
+  }
+
+  function buildAskAnythingPrompt() {
+    let prompt = `You are Sakhaa (सखा), a sacred AI spiritual companion inspired by the Bhagavad Gita.
+
+For this Ask Anything response:
+- Answer directly and plainly first — give the practical, human answer before any scripture
+- Then bring in relevant Gita or Dharma wisdom if it adds genuine insight — connect it to real life, not just quote
+- Speak like a wise friend explaining something over chai — warm, clear, no jargon
+- Keep it under 200 words total
+- No bullet points unless listing clear steps
+- Never preachy, never lecture-like
+- End with 1–2 short related questions the person might want to explore next, prefixed exactly with "RELATED:"`;
+
+    prompt += `\n\n=== SAKHAA MEMORY ===\nUser: ${userName}\nToday's mood: ${currentMood}`;
+    if (stressSource) prompt += ` (source: ${stressSource})`;
+    prompt += '\n';
+    if (gateHistory.length > 0) prompt += `Days using Sakhaa: ${gateHistory.length}\n`;
+    prompt += '=== END MEMORY ===';
+    return prompt;
+  }
+
+  window.askWisdom = function() {
+    const q = document.getElementById('wisdom-input').value.trim();
+    if (!q) return;
+    askQuestion(q);
+  };
+
+  window.askQuestion = async function(question) {
+    document.getElementById('wisdom-input').value = question;
+
+    // Show response area, hide popular questions
+    const responseArea = document.getElementById('wisdom-response-area');
+    const popularWrap = document.getElementById('popular-questions-wrap');
+    const responseText = document.getElementById('wisdom-response-text');
+    const responseQuestion = document.getElementById('wisdom-response-question');
+    const relatedWrap = document.getElementById('wisdom-related-wrap');
+
+    responseArea.classList.remove('hidden');
+    popularWrap.classList.add('hidden');
+    relatedWrap.classList.add('hidden');
+    responseQuestion.textContent = question;
+    responseText.textContent = 'Sakhaa is thinking…';
+
+    // Scroll response into view
+    responseArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    try {
+      const raw = await window.callAI(
+        [{ role: 'user', content: question }],
+        buildAskAnythingPrompt()
+      );
+
+      // Split out RELATED questions
+      const parts = raw.split(/RELATED:/i);
+      const mainAnswer = parts[0].trim();
+      const relatedRaw = parts[1] ? parts[1].trim() : '';
+
+      responseText.textContent = mainAnswer;
+
+      // Render related questions if present
+      if (relatedRaw) {
+        const relatedQs = relatedRaw
+          .split('\n')
+          .map(l => l.replace(/^[-–•\d.]+\s*/, '').trim())
+          .filter(l => l.length > 5 && l.length < 120)
+          .slice(0, 3);
+
+        if (relatedQs.length) {
+          const relatedContainer = document.getElementById('wisdom-related');
+          relatedContainer.innerHTML = relatedQs.map(q =>
+            `<button class="wisdom-question-btn" onclick="askQuestion('${q.replace(/'/g, "&#39;")}')">${q}</button>`
+          ).join('');
+          relatedWrap.classList.remove('hidden');
+        }
+      }
+
+      // Show popular questions again below
+      popularWrap.classList.remove('hidden');
+    } catch (e) {
+      responseText.textContent = "Something went quiet for a moment — try again.";
+      popularWrap.classList.remove('hidden');
+      console.warn('Ask Anything failed:', e);
+    }
+  };
+
+  window.exploreVerse = function(ref) {
+    switchTab('wisdom');
+    const input = document.getElementById('wisdom-input');
+    if (input) {
+      input.value = `What is the deeper meaning of ${ref}?`;
+      input.focus();
+    }
+  };
+
+  // ─── KARMA ───
+  function addKarmaPoints(points) {
+    karmaPoints += points;
+    saveUserProfile();
+    updateKarmaDisplay();
+    showKarmaAnimation(points);
+  }
+
+  function updateKarmaDisplay() {
+    const display = document.getElementById('karma-points-display');
+    const bar = document.getElementById('karma-bar');
+    const journeyKarma = document.getElementById('journey-karma');
+    const streakEl = document.getElementById('streak-days');
+    if (display) display.textContent = `${karmaPoints} points`;
+    if (bar) bar.style.width = `${Math.min((karmaPoints % 100), 100)}%`;
+    if (journeyKarma) journeyKarma.textContent = karmaPoints;
+    if (streakEl) streakEl.textContent = karmaStreak;
+  }
+
+  function showKarmaAnimation(points) {
+    const el = document.createElement('div');
+    el.className = 'karma-plus';
+    el.textContent = `+${points} karma`;
+    el.style.left = '50%';
+    el.style.top = '40%';
+    el.style.transform = 'translateX(-50%)';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1000);
+  }
+
+  // ─── HOME SCREEN ───
+  function getVerseForMood(mood) {
+    const verses = GITA_VERSES.filter(v => v.mood.includes(mood));
+    const pool = verses.length ? verses : GITA_VERSES;
+    // Deterministic pick per day so verse stays stable within a session
+    const today = new Date().toISOString().split('T')[0];
+    const seed = today.split('-').reduce((a, b) => a + parseInt(b), 0);
+    return pool[seed % pool.length];
+  }
+
+  function renderHomeMoodContent() {
+    const container = document.getElementById('home-mood-content');
+    if (!container) return;
+
+    const verse = getVerseForMood(currentMood);
+    const actions = KARMA_ACTIONS[currentMood] || KARMA_ACTIONS.neutral;
+    const today = new Date().toISOString().split('T')[0];
+    const completedToday = JSON.parse(localStorage.getItem(`sakhaa_ka_${today}`) || '[]');
+
+    let html = '';
+
+    if (currentMood === 'unhappy') {
+      html += `
+        <div class="card" style="background: linear-gradient(135deg, var(--indigo-light) 0%, #F0EFF8 100%); text-align: center;">
+          <div class="card-label" style="color: var(--indigo);">Breathe with me</div>
+          <div style="font-size: 52px; margin: 8px 0;">🌬️</div>
+          <div style="font-size: 15px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px;">
+            Breathe in for 4 · hold for 4 · out for 6.<br>Even one breath shifts something.
+          </div>
+          <button class="btn-primary" style="background: var(--indigo); font-size: 14px; padding: 12px 20px;" onclick="goToSaarthi()">
+            Sakhaa is here for you
+          </button>
+        </div>`;
+    } else if (currentMood === 'happy') {
+      html += `
+        <div class="card" style="background: linear-gradient(135deg, var(--gold-light) 0%, #FFF8EC 100%); text-align: center;">
+          <div style="font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px;">Feeling good is energy</div>
+          <div style="font-size: 15px; color: var(--text-primary); line-height: 1.6;">
+            ${karmaStreak > 1 ? `${karmaStreak} days in a row — that's real. Let's keep it going.` : 'Good energy is a gift. Use it with intention today.'}
+          </div>
+        </div>`;
+    }
+
+    // Daily verse with "Explore deeper" button
+    const verseRef = verse.ref.replace(/'/g, "\\'");
+    html += `
+      <div class="card">
+        <div class="card-label">Today's wisdom</div>
+        <div class="verse-text">"${verse.text}"</div>
+        <div class="verse-ref">${verse.ref}</div>
+        <button onclick="exploreVerse('${verseRef}')"
+                style="margin-top: 12px; background: none; border: 1px solid var(--saffron); color: var(--saffron); border-radius: var(--radius-pill); padding: 8px 16px; font-size: 13px; cursor: pointer; font-family: var(--font-sans); font-weight: 500;">
+          Explore deeper →
+        </button>
+      </div>`;
+
+    // Karma actions
+    const actionLabel = currentMood === 'happy' ? 'Amplify the good' :
+                        currentMood === 'unhappy' ? 'Small steps, big love' : "Today's karma actions";
+    html += `
+      <div class="card">
+        <div class="card-label">${actionLabel}</div>
+        <div class="karma-actions-list">`;
+
+    actions.forEach(a => {
+      const done = completedToday.includes(a.id);
+      html += `
+          <div class="karma-action-item${done ? ' done' : ''}" id="action-${a.id}"
+               ${done ? '' : `onclick="completeKarmaAction('${a.id}', ${a.points})"`}>
+            <span class="karma-action-icon">${a.icon}</span>
+            <span class="karma-action-text">${a.label}</span>
+            <span class="karma-action-points${done ? ' done' : ''}">${done ? '✓' : `+${a.points}`}</span>
+          </div>`;
+    });
+
+    html += `</div></div>`;
+
+    // Saarthi invite — mood-matched
+    const saarthiCopy = {
+      happy:   { label: 'Channel this well',        msg: "Feeling good is its own kind of energy. Let's use it wisely.",    cta: 'Talk to Sakhaa' },
+      unhappy: { label: "You're not alone",          msg: "Sakhaa is sitting with you. You don't have to figure it out now.", cta: 'Open Saarthi' },
+      neutral: { label: "What's stirring in you?",   msg: "Some days are just... days. Sakhaa is here either way.",           cta: 'Talk to Sakhaa' }
+    };
+    const sc = saarthiCopy[currentMood] || saarthiCopy.neutral;
+    html += `
+      <div class="card" style="background: linear-gradient(135deg, var(--indigo-light) 0%, #F5F4FC 100%); cursor: pointer; margin-bottom: 100px;" onclick="goToSaarthi()">
+        <div class="card-label" style="color: var(--indigo);">${sc.label}</div>
+        <div style="font-size: 16px; color: var(--text-primary); margin-bottom: 16px; line-height: 1.5;">${sc.msg}</div>
+        <button class="btn-primary" style="background: var(--indigo); font-size: 14px; padding: 12px 20px;">${sc.cta}</button>
+      </div>`;
+
+    container.innerHTML = html;
+  }
+
+  window.completeKarmaAction = async function(actionId, points) {
+    const today = new Date().toISOString().split('T')[0];
+    const key = `sakhaa_ka_${today}`;
+    const done = JSON.parse(localStorage.getItem(key) || '[]');
+    if (done.includes(actionId)) return;
+
+    done.push(actionId);
+    localStorage.setItem(key, JSON.stringify(done));
+
+    // Animate the item immediately
+    const el = document.getElementById(`action-${actionId}`);
+    if (el) {
+      el.classList.add('done');
+      el.removeAttribute('onclick');
+      const pointsEl = el.querySelector('.karma-action-points');
+      if (pointsEl) { pointsEl.textContent = '✓'; pointsEl.classList.add('done'); }
+    }
+
+    addKarmaPoints(points);
+
+    if (currentUser) {
+      setDoc(doc(db, 'users', currentUser.uid, 'karma', 'data'), {
+        points: karmaPoints, lastUpdated: serverTimestamp()
+      }, { merge: true }).catch(e => console.warn('Karma save failed:', e));
+    }
+  };
+
+  function updateHomeScreen() {
+    const greetingEl = document.getElementById('home-greeting');
+    const dateEl = document.getElementById('home-date');
+    const moodEmojiEl = document.getElementById('home-mood-emoji');
+    const moodLabelEl = document.getElementById('home-mood-label');
+
+    const hour = new Date().getHours();
+    const timeGreet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    if (greetingEl) greetingEl.textContent = `${timeGreet}, ${userName}`;
+
+    const now = new Date();
+    if (dateEl) dateEl.textContent = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
+
+    const moodMap = { happy: ['☀️', 'Feeling good'], neutral: ['🌤️', 'So-so today'], unhappy: ['🌧️', 'Heavy day'] };
+    const [emoji, label] = moodMap[currentMood] || moodMap.neutral;
+    if (moodEmojiEl) moodEmojiEl.textContent = emoji;
+    if (moodLabelEl) moodLabelEl.textContent = label;
+
+    updateKarmaDisplay();
+    renderHomeMoodContent();
+  }
+
+  // ─── POOJA GUIDE ───
+  window.beginPooja = function(id) {
+    currentPooja = POOJA_GUIDES.find(p => p.id === id);
+    if (!currentPooja) return;
+    poojaStep = 0;
+    poojaSimplified = false;
+    showScreen('screen-pooja');
+    renderPoojaContent();
+  };
+
+  function renderPoojaContent() {
+    const content = document.getElementById('pooja-content');
+    const titleEl = document.getElementById('pooja-header-title');
+    const badgeEl = document.getElementById('pooja-step-badge');
+    if (!content || !currentPooja) return;
+
+    titleEl.textContent = currentPooja.name;
+
+    const steps = poojaSimplified ? currentPooja.simplified_steps : currentPooja.steps;
+    const totalSteps = steps.length;
+
+    let html = '';
+
+    if (poojaStep === 0) {
+      // Materials check
+      badgeEl.textContent = '';
+      html = `
+        <div style="margin-bottom: 20px;">
+          <div style="font-family: var(--font-serif); font-size: 24px; color: var(--text-primary); margin-bottom: 6px;">${currentPooja.icon} ${currentPooja.name}</div>
+          <div style="font-size: 13px; color: var(--text-secondary);">${currentPooja.occasion}</div>
+        </div>
+        <div class="card">
+          <div class="card-label">What you'll need</div>
+          <div style="margin-top: 4px;">
+            ${currentPooja.materials.map(m => `
+              <div class="material-item">
+                <div class="material-dot ${m.optional ? 'optional' : 'required'}"></div>
+                <span style="font-size: 14px; color: var(--text-primary); flex: 1;">${m.item}</span>
+                ${m.optional ? '<span style="font-size: 11px; color: var(--text-tertiary);">optional</span>' : ''}
+              </div>`).join('')}
+          </div>
+          <div style="margin-top: 14px; padding: 12px; background: var(--sage-light); border-radius: var(--radius-sm); font-size: 13px; color: var(--sage); line-height: 1.5;">
+            Don't have everything? Bhagwan accepts sincerity over ceremony. Proceed with what you have.
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 4px;">
+          <button class="btn-primary" onclick="startPoojaSteps(false)" style="flex: 1; font-size: 14px; padding: 14px;">
+            Begin · ${currentPooja.duration}
+          </button>
+          <button class="btn-primary" onclick="startPoojaSteps(true)"
+                  style="flex: 0 0 auto; background: var(--warm-white); color: var(--saffron); border: 1px solid var(--saffron); font-size: 13px; padding: 14px 16px;">
+            Simplified<br>${currentPooja.duration_simplified}
+          </button>
+        </div>`;
+    } else if (poojaStep <= totalSteps) {
+      const step = steps[poojaStep - 1];
+      badgeEl.textContent = `${poojaStep} / ${totalSteps}`;
+      html = `
+        <div class="pooja-step-card">
+          ${step.optional ? '<div style="font-size: 11px; color: var(--text-tertiary); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em;">Optional</div>' : ''}
+          <div class="pooja-step-title">${step.title}</div>
+          <div class="pooja-step-instruction">${step.instruction}</div>
+          ${step.sanskrit ? `
+            <div class="pooja-sanskrit">
+              <div class="pooja-sanskrit-text">${step.sanskrit}</div>
+              ${step.transliteration ? `<div class="pooja-transliteration">${step.transliteration}</div>` : ''}
+            </div>` : ''}
+          ${step.why && !poojaSimplified ? `
+            <div class="pooja-why">
+              <strong style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em;">Why this matters</strong><br>
+              ${step.why}
+            </div>` : ''}
+        </div>
+        <div class="pooja-nav">
+          ${poojaStep > 1 ? `<button class="pooja-nav-back" onclick="prevPoojaStep()">← Back</button>` : ''}
+          <button class="btn-primary" onclick="nextPoojaStep()" style="flex: 1; padding: 14px;">
+            ${poojaStep < totalSteps ? 'Next step →' : 'Complete pooja 🙏'}
+          </button>
+        </div>`;
+    } else {
+      // Completion
+      badgeEl.textContent = '✓ Done';
+      html = `
+        <div style="text-align: center; padding: 40px 0;">
+          <div style="font-size: 60px; margin-bottom: 16px;">${currentPooja.icon}</div>
+          <div style="font-family: var(--font-serif); font-size: 28px; color: var(--text-primary); margin-bottom: 8px;">
+            ${currentPooja.name} complete
+          </div>
+          <div style="font-size: 15px; color: var(--text-secondary); margin-bottom: 32px; line-height: 1.6;">
+            You brought sincerity. That is the whole practice.
+          </div>
+          <div style="background: linear-gradient(135deg, var(--saffron-light), var(--gold-light)); border-radius: var(--radius); padding: 24px; margin-bottom: 32px;">
+            <div style="font-size: 11px; color: var(--saffron-deep); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;">Karma earned</div>
+            <div style="font-family: var(--font-serif); font-size: 40px; color: var(--saffron-deep);">+20</div>
+          </div>
+          <button class="btn-primary" onclick="switchTab('practice')" style="width: 100%;">Return to Practice</button>
+        </div>`;
+    }
+
+    content.innerHTML = html;
+    content.scrollTop = 0;
+  }
+
+  window.startPoojaSteps = function(simplified) {
+    poojaSimplified = simplified;
+    poojaStep = 1;
+    renderPoojaContent();
+  };
+
+  window.nextPoojaStep = function() {
+    const steps = poojaSimplified ? currentPooja.simplified_steps : currentPooja.steps;
+    if (poojaStep < steps.length) {
+      poojaStep++;
+      renderPoojaContent();
+    } else {
+      // Completion
+      poojaStep = steps.length + 1;
+      addKarmaPoints(20);
+      renderPoojaContent();
+    }
+  };
+
+  window.prevPoojaStep = function() {
+    if (poojaStep > 1) {
+      poojaStep--;
+      renderPoojaContent();
+    }
+  };
+
+  // ─── KARMA JOURNAL ───
+  window.startJournal = function() {
+    journalStep = 1;
+    journalData = {};
+    showScreen('screen-journal');
+    renderJournalStep(1);
+  };
+
+  function renderJournalStep(step) {
+    journalStep = step;
+    const content = document.getElementById('journal-step-content');
+    const dotsEl = document.getElementById('journal-step-indicator');
+    if (!content) return;
+
+    // Step dots
+    dotsEl.innerHTML = [1,2,3,4,5].map(i =>
+      `<div class="journal-dot${i <= step ? ' active' : ''}"></div>`
+    ).join('');
+
+    const contextMsg = {
+      happy:   'This morning you felt good. Did that carry through?',
+      unhappy: 'This morning was heavy. How are you feeling now?',
+      neutral: 'You set an intention this morning. How did the day go?'
+    }[currentMood] || 'How are you feeling as the day closes?';
+
+    let html = '';
+    if (step === 1) {
+      html = `
+        <div style="margin-bottom: 28px;">
+          <div style="font-family: var(--font-serif); font-size: 27px; color: var(--text-primary); line-height: 1.35; margin-bottom: 10px;">Evening reflection</div>
+          <div style="font-size: 15px; color: var(--text-secondary); line-height: 1.6;">${contextMsg}</div>
+        </div>
+        <div class="journal-mood-grid">
+          ${[['😊','great','Great'],['🙂','good','Good'],['😐','okay','Okay'],['😔','low','Low'],
+             ['😢','sad','Sad'],['😰','anxious','Anxious'],['🙏','grateful','Grateful']].map(([e,v,l]) => `
+            <button class="journal-mood-btn" id="jm-${v}" onclick="selectJournalMood('${v}','${l}')">
+              <span>${e}</span><span>${l}</span>
+            </button>`).join('')}
+        </div>`;
+    } else if (step === 2) {
+      html = `
+        <div style="margin-bottom: 24px;">
+          <div style="font-family: var(--font-serif); font-size: 27px; color: var(--text-primary); line-height: 1.35; margin-bottom: 8px;">What went well today?</div>
+          <div style="font-size: 15px; color: var(--text-secondary);">Even one small thing counts.</div>
+        </div>
+        ${journalData.ai1 ? `
+          <div class="card" style="border-left: 3px solid var(--sage); margin-bottom: 20px;">
+            <div style="font-size: 15px; line-height: 1.75; color: var(--text-primary);">${journalData.ai1}</div>
+          </div>
+          <button class="btn-primary" onclick="renderJournalStep(3)" style="width: 100%;">Continue →</button>
+        ` : `
+          <textarea id="journal-went-well" class="journal-textarea" placeholder="Write anything here…" rows="5"></textarea>
+          <button class="btn-primary" onclick="submitWentWell()" style="width: 100%; margin-top: 12px;">Share with Sakhaa</button>
+        `}`;
+    } else if (step === 3) {
+      html = `
+        <div style="margin-bottom: 24px;">
+          <div style="font-family: var(--font-serif); font-size: 27px; color: var(--text-primary); line-height: 1.35; margin-bottom: 8px;">What didn't go as wanted?</div>
+          <div style="font-size: 15px; color: var(--text-secondary);">No judgment here. Just honest.</div>
+        </div>
+        ${journalData.ai2 ? `
+          <div class="card" style="border-left: 3px solid var(--indigo); margin-bottom: 20px;">
+            <div style="font-size: 15px; line-height: 1.75; color: var(--text-primary);">${journalData.ai2}</div>
+          </div>
+          <button class="btn-primary" onclick="renderJournalStep(4)" style="width: 100%;">Continue →</button>
+        ` : `
+          <div class="journal-struggle-options">
+            ${[['work','Work felt heavy'],['relationship','A relationship was difficult'],
+               ['plans',"I didn't do what I planned"],['disconnected','I felt disconnected'],
+               ['unexpected','Something unexpected happened'],['nothing','Actually, today was okay']
+              ].map(([v,l]) => `
+              <button class="struggle-btn" id="struggle-${v}" onclick="selectStruggle(this,'${v}')">${l}</button>`
+            ).join('')}
+          </div>
+          <button class="btn-primary" onclick="submitStruggles()" style="width: 100%; margin-top: 16px;">Share with Sakhaa</button>
+        `}`;
+    } else if (step === 4) {
+      if (!journalData.karmaAwarded) {
+        journalData.karmaAwarded = true;
+        addKarmaPoints(15);
+        saveJournalEntry();
+      }
+      html = `
+        <div style="text-align: center; padding: 32px 0;">
+          <div style="font-size: 60px; margin-bottom: 16px;">✨</div>
+          <div style="font-family: var(--font-serif); font-size: 28px; color: var(--text-primary); margin-bottom: 8px;">You showed up</div>
+          <div style="font-size: 15px; color: var(--text-secondary); margin-bottom: 32px;">That is the whole practice.</div>
+          <div style="background: linear-gradient(135deg, var(--saffron-light), var(--gold-light)); border-radius: var(--radius); padding: 24px; margin-bottom: 32px;">
+            <div style="font-size: 11px; color: var(--saffron-deep); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;">Total karma</div>
+            <div style="font-family: var(--font-serif); font-size: 56px; color: var(--saffron-deep); font-weight: 500;">${karmaPoints}</div>
+          </div>
+          <button class="btn-primary" onclick="renderJournalStep(5)" style="width: 100%;">How to close the day →</button>
+        </div>`;
+    } else if (step === 5) {
+      html = `
+        <div style="margin-bottom: 28px;">
+          <div style="font-family: var(--font-serif); font-size: 27px; color: var(--text-primary); line-height: 1.35; margin-bottom: 8px;">How would you like to close the day?</div>
+          <div style="font-size: 15px; color: var(--text-secondary);">Rest is also dharma.</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          ${[['🕉️','meditation','Guided meditation','5 minutes of stillness'],
+             ['🌬️','breathing','Breathing exercise','Slow the mind down'],
+             ['💬','saarthi','Talk to Sakhaa','Process the day together'],
+             ['💤','rest','Just rest tonight','That is enough']
+            ].map(([icon,val,label,sub]) => `
+            <button class="sleep-prep-btn" onclick="selectSleepPrep('${val}')">
+              <span style="font-size: 28px; flex-shrink: 0;">${icon}</span>
+              <div>
+                <div style="font-size: 15px; font-weight: 500; color: var(--text-primary); font-family: var(--font-sans);">${label}</div>
+                <div style="font-size: 13px; color: var(--text-secondary);">${sub}</div>
+              </div>
+            </button>`).join('')}
+        </div>`;
+    }
+    content.innerHTML = html;
+    content.scrollTop = 0;
+  }
+
+  window.selectJournalMood = function(mood, label) {
+    journalData.mood = mood;
+    journalData.moodLabel = label;
+    document.querySelectorAll('.journal-mood-btn').forEach(b => b.classList.remove('selected'));
+    const btn = document.getElementById(`jm-${mood}`);
+    if (btn) btn.classList.add('selected');
+    setTimeout(() => renderJournalStep(2), 300);
+  };
+
+  window.submitWentWell = async function() {
+    const textarea = document.getElementById('journal-went-well');
+    const text = textarea ? textarea.value.trim() : '';
+    if (!text) { if (textarea) textarea.focus(); return; }
+    journalData.wentWell = text;
+
+    textarea.disabled = true;
+    const btn = document.querySelector('#journal-step-content .btn-primary');
+    if (btn) btn.textContent = 'Sakhaa is thinking…';
+
+    try {
+      const resp = await window.callAI(
+        [{ role: 'user', content: text }],
+        `${buildSystemPrompt()}\n\nThe user is doing their evening reflection. They just shared something that went well today. Respond in 2–3 warm sentences — affirm what they noticed, make them feel seen. Do not give advice. Mention they have earned +15 karma for taking time to reflect.`
+      );
+      journalData.ai1 = resp;
+    } catch(e) {
+      journalData.ai1 = `Noticing the good — even the small things — is a practice in itself. Well done for taking this moment. +15 karma for showing up tonight.`;
+    }
+    renderJournalStep(2);
+  };
+
+  window.selectStruggle = function(el, val) {
+    el.classList.toggle('selected');
+    if (!journalData.struggles) journalData.struggles = [];
+    if (el.classList.contains('selected')) {
+      if (!journalData.struggles.includes(val)) journalData.struggles.push(val);
+    } else {
+      journalData.struggles = journalData.struggles.filter(s => s !== val);
+    }
+  };
+
+  window.submitStruggles = async function() {
+    const selected = journalData.struggles || [];
+    const btn = document.querySelector('#journal-step-content .btn-primary');
+    if (btn) btn.textContent = 'Sakhaa is thinking…';
+
+    const struggleText = selected.length
+      ? selected.join(', ')
+      : 'nothing specific — the day was okay';
+
+    try {
+      const resp = await window.callAI(
+        [{ role: 'user', content: `Today what was difficult: ${struggleText}` }],
+        `${buildSystemPrompt()}\n\nThe user is doing their evening reflection. They shared what was difficult today. Respond with ZERO guilt and ZERO judgment. First, acknowledge the difficulty warmly (1 sentence). Then offer ONE brief Dharma reframe — a perspective from the Gita that reframes without dismissing (1–2 sentences). End with something grounding. Total: under 4 sentences. No advice. No "you should". Just hold it with them.`
+      );
+      journalData.ai2 = resp;
+    } catch(e) {
+      journalData.ai2 = `Every day brings its own weight. The Gita reminds us that difficulty is not a sign of failure — it is the very ground on which growth happens. Rest easy tonight.`;
+    }
+    renderJournalStep(3);
+  };
+
+  window.selectSleepPrep = function(option) {
+    if (option === 'meditation' || option === 'breathing') {
+      switchTab('practice');
+    } else if (option === 'saarthi') {
+      goToSaarthi();
+    } else {
+      // rest — show a closing message
+      const content = document.getElementById('journal-step-content');
+      content.innerHTML = `
+        <div style="text-align: center; padding: 48px 0;">
+          <div style="font-size: 52px; margin-bottom: 20px;">🌙</div>
+          <div style="font-family: var(--font-serif); font-size: 26px; color: var(--text-primary); margin-bottom: 12px; line-height: 1.4;">Sleep well, ${userName}</div>
+          <div style="font-size: 15px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 32px;">
+            You showed up today. That is enough.<br>Sakhaa will be here in the morning.
+          </div>
+          <button class="btn-primary" onclick="switchTab('journey')" style="width: 100%;">Back to journey</button>
+        </div>`;
+    }
+  };
+
+  async function saveJournalEntry() {
+    if (!currentUser) return;
+    const today = new Date().toISOString().split('T')[0];
+    try {
+      await setDoc(doc(db, 'users', currentUser.uid, 'journal_entries', today), {
+        mood: journalData.mood || '',
+        moodLabel: journalData.moodLabel || '',
+        wentWell: journalData.wentWell || '',
+        struggles: journalData.struggles || [],
+        timestamp: serverTimestamp()
+      });
+    } catch(e) {
+      console.warn('Journal save failed:', e);
+    }
+  }
+
+  async function loadWeeklyInsight() {
+    const insightCard = document.getElementById('journey-insight');
+    const insightText = document.getElementById('journey-insight-text');
+    if (!insightCard || !insightText) return;
+    if (gateHistory.length < 3) return; // Not enough data yet
+
+    const pattern = gateHistory.slice(0, 7).map(g => g.mood).join(', ');
+    const dominantMood = ['happy','unhappy','neutral'].reduce((best, m) => {
+      const count = gateHistory.slice(0,7).filter(g => g.mood === m).length;
+      const bestCount = gateHistory.slice(0,7).filter(g => g.mood === best).length;
+      return count > bestCount ? m : best;
+    }, 'neutral');
+
+    insightText.textContent = 'Sakhaa is looking at your week…';
+    insightCard.classList.remove('hidden');
+
+    try {
+      const resp = await window.callAI(
+        [{ role: 'user', content: `My mood pattern this week: ${pattern}. Dominant feeling: ${dominantMood}.` }],
+        `${buildSystemPrompt()}\n\nYou are looking at the user's mood pattern for the week and offering a brief insight. Speak like a friend who has been watching. Notice something real. Offer one observation and one gentle encouragement. Keep it to 2-3 sentences. Warm, not clinical. Do not list things. Just speak.`
+      );
+      insightText.textContent = resp;
+    } catch(e) {
+      insightCard.classList.add('hidden');
+    }
+  }
+
+  function updateJourneyScreen() {
+    const streakEl = document.getElementById('journey-streak');
+    if (streakEl) streakEl.textContent = karmaStreak;
+    updateKarmaDisplay();
+    renderMoodChart();
+    // Load weekly insight lazily (non-blocking)
+    loadWeeklyInsight().catch(() => {});
+  }
+
+  function renderMoodChart() {
+    const container = document.getElementById('mood-chart');
+    if (!container) return;
+    container.innerHTML = '';
+    const days = 7;
+    for (let i = days - 1; i >= 0; i--) {
+      const entry = gateHistory[i];
+      const color = !entry ? 'var(--saffron-light)' : entry.mood === 'happy' ? 'var(--sage)' : entry.mood === 'unhappy' ? 'var(--saffron)' : 'var(--gold)';
+      const height = !entry ? 20 : entry.mood === 'happy' ? 60 : entry.mood === 'unhappy' ? 30 : 45;
+      const bar = document.createElement('div');
+      bar.style.cssText = `flex:1; height:${height}px; background:${color}; border-radius:4px; opacity:${entry ? 1 : 0.25}`;
+      container.appendChild(bar);
+    }
+  }
+
+  // ─── NAV HELPERS ───
+  window.goToSaarthi = function() { switchTab('saarthi'); };
+
+  // ─── TOAST ───
+  window.showToast = function(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+  };
+
+  // ─── LOADING ───
+  function hideLoading() {
+    setTimeout(() => {
+      document.getElementById('loading-overlay').classList.add('hidden');
+    }, 800);
+  }
+
+  // ─── SHARE ───
+  window.shareApp = async function() {
+    const shareData = {
+      title: 'Sakhaa — Your Sacred Friend',
+      text: 'Sakhaa is a sacred AI companion inspired by the friendship of Krishna and Arjuna. Wisdom, warmth, and dharma — beside you every day.',
+      url: 'https://sakhaa-ai.web.app'
+    };
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+      } catch (e) {
+        if (e.name !== 'AbortError') copyShareLink();
+      }
+    } else {
+      copyShareLink();
+    }
+  };
+
+  function copyShareLink() {
+    const url = 'https://sakhaa-ai.web.app';
+    navigator.clipboard.writeText(url).then(() => {
+      showToast('Link copied — share Sakhaa with someone who needs a sacred friend');
+    }).catch(() => {
+      showToast('sakhaa-ai.web.app — share with someone who needs a sacred friend');
+    });
+  }
+
+  function showToast(msg) {
+    let toast = document.getElementById('sakhaa-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'sakhaa-toast';
+      toast.style.cssText = `
+        position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+        background: var(--text-primary); color: var(--warm-white);
+        padding: 12px 20px; border-radius: var(--radius-pill);
+        font-size: 13px; font-family: var(--font-sans);
+        max-width: 320px; text-align: center;
+        z-index: 9999; opacity: 0; transition: opacity 0.3s;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      `;
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 3500);
+  }
+
+  // ─── EXPOSE INTERNALS FOR TESTABILITY ───
+  window.detectCrisis = detectCrisis;
+  window.buildSaarthiGreeting = buildSaarthiGreeting;
+  window.callAI = callAI;
+  window.callGeminiFallback = callGeminiFallback;
+  window.saveUserProfile = saveUserProfile;
+  window.saveGateSession = saveGateSession;
+  window.addKarmaPoints = addKarmaPoints;
+  window._auth = auth;
+  window._signInAnonymously = signInAnonymously;
+  Object.defineProperty(window, 'currentUser', {
+    get: () => currentUser,
+    set: v => { currentUser = v; }
+  });
+  Object.defineProperty(window, 'fullConversationHistory', {
+    get: () => fullConversationHistory,
+    set: v => { fullConversationHistory = v; }
+  });
+  Object.defineProperty(window, 'currentMood', {
+    get: () => currentMood,
+    set: v => { currentMood = v; }
+  });
+  Object.defineProperty(window, 'stressSource', {
+    get: () => stressSource,
+    set: v => { stressSource = v; }
+  });
+  Object.defineProperty(window, 'gateHistory', {
+    get: () => gateHistory,
+    set: v => { gateHistory = v; }
+  });
+  Object.defineProperty(window, 'userName', {
+    get: () => userName,
+    set: v => { userName = v; }
+  });
+  Object.defineProperty(window, 'CONFIG', { get: () => CONFIG });
+  Object.defineProperty(window, 'karmaPoints', {
+    get: () => karmaPoints,
+    set: v => { karmaPoints = v; }
+  });
+  Object.defineProperty(window, 'karmaStreak', {
+    get: () => karmaStreak,
+    set: v => { karmaStreak = v; }
+  });
+  Object.defineProperty(window, 'journalStep', {
+    get: () => journalStep,
+    set: v => { journalStep = v; }
+  });
+  Object.defineProperty(window, 'journalData', {
+    get: () => journalData,
+    set: v => { journalData = v; }
+  });
+  window.renderJournalStep = renderJournalStep;
+  window.renderPoojaContent = renderPoojaContent;
+  Object.defineProperty(window, 'currentPooja', {
+    get: () => currentPooja,
+    set: v => { currentPooja = v; }
+  });
+  Object.defineProperty(window, 'poojaStep', {
+    get: () => poojaStep,
+    set: v => { poojaStep = v; }
+  });
+  Object.defineProperty(window, 'poojaSimplified', {
+    get: () => poojaSimplified,
+    set: v => { poojaSimplified = v; }
+  });
+</script>
+
+<!-- ─── SERVICE WORKER (PWA) ─── -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+</script>
+
+</body>
+</html>
