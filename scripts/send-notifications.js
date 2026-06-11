@@ -40,7 +40,8 @@ function todayIST() {
 }
 
 async function getEligibleUsers() {
-  const snap = await db.collectionGroup('profile').where('fcmToken', '!=', '').get();
+  // Flat top-level collection — no composite index needed
+  const snap = await db.collection('fcm_tokens').get();
   const users = [];
   for (const doc of snap.docs) {
     const data = doc.data();
@@ -49,8 +50,7 @@ async function getEligibleUsers() {
       const until = data.restDayUntil.toDate ? data.restDayUntil.toDate() : new Date(data.restDayUntil);
       if (until > new Date()) continue;
     }
-    const uid = doc.ref.parent.parent.id;
-    users.push({ uid, name: data.name || 'Friend', fcmToken: data.fcmToken });
+    users.push({ uid: doc.id, name: data.name || 'Friend', fcmToken: data.fcmToken });
   }
   return users;
 }

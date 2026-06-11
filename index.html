@@ -3768,9 +3768,16 @@ For this Ask Anything response:
   // Save FCM token to Firestore under the user's profile
   async function saveFCMToken(token) {
     if (!currentUser) return;
+    // Write to flat top-level collection (queried by Cloud script without needing indexes)
+    await setDoc(doc(db, 'fcm_tokens', currentUser.uid), {
+      fcmToken: token,
+      name: userName || 'Friend',
+      notifEnabled: true,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    // Also keep token in user profile for reference
     await setDoc(doc(db, `users/${currentUser.uid}/profile/data`), {
       fcmToken: token,
-      fcmTokenUpdated: serverTimestamp(),
       notifEnabled: true
     }, { merge: true });
   }
@@ -3812,6 +3819,7 @@ For this Ask Anything response:
     if (!currentUser) return;
     const btn = document.getElementById('rest-day-btn');
     const until = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    await setDoc(doc(db, 'fcm_tokens', currentUser.uid), { restDayUntil: until }, { merge: true });
     await setDoc(doc(db, `users/${currentUser.uid}/profile/data`), {
       restDayUntil: until
     }, { merge: true });
@@ -3824,6 +3832,10 @@ For this Ask Anything response:
 
   window.disableNotifications = async function() {
     if (!currentUser) return;
+    await setDoc(doc(db, 'fcm_tokens', currentUser.uid), {
+      notifEnabled: false,
+      fcmToken: ''
+    }, { merge: true });
     await setDoc(doc(db, `users/${currentUser.uid}/profile/data`), {
       notifEnabled: false,
       fcmToken: ''
