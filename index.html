@@ -1384,6 +1384,118 @@
     }
     .screen.active > * { animation: fadeInUp 0.35s ease forwards; }
 
+    /* ─── KNOW YOU BETTER ─── */
+    .personality-wrap {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      padding: 48px 24px 40px;
+      background: linear-gradient(160deg, var(--saffron-light) 0%, var(--cream) 60%);
+    }
+    .personality-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+    .personality-progress-bar {
+      flex: 1;
+      height: 4px;
+      background: rgba(200,118,58,0.15);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .personality-progress-fill {
+      height: 100%;
+      background: var(--saffron);
+      border-radius: 100px;
+      transition: width 0.4s ease;
+      width: 33%;
+    }
+    .personality-progress-label {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      white-space: nowrap;
+    }
+    .personality-question-wrap {
+      flex: 1;
+    }
+    .personality-question {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.35;
+      margin-bottom: 32px;
+    }
+    .personality-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .personality-option {
+      background: var(--warm-white);
+      border: 1.5px solid rgba(200,118,58,0.15);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      color: var(--text-primary);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+      line-height: 1.4;
+    }
+    .personality-option:active,
+    .personality-option.selected {
+      background: var(--saffron-light);
+      border-color: var(--saffron);
+      color: var(--saffron-deep);
+      font-weight: 500;
+    }
+    .personality-skip {
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 16px 0 0;
+      text-align: center;
+      width: 100%;
+    }
+    /* Prompt card shown on response screen day 3+ */
+    #personality-prompt-card {
+      margin: 20px 20px 0;
+      background: linear-gradient(135deg, var(--saffron-light) 0%, #FFF8F2 100%);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .personality-prompt-icon { font-size: 28px; margin-bottom: 10px; }
+    .personality-prompt-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      color: var(--saffron-deep);
+      margin-bottom: 8px;
+    }
+    .personality-prompt-body {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .personality-prompt-btn {
+      background: var(--saffron);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 12px 24px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
     /* ─── NOTIFICATION PROMPT ─── */
     #notif-prompt-card {
       margin: 20px 20px 0;
@@ -1639,6 +1751,16 @@
         </div>
       </div>
 
+      <!-- Know you better — shown once after day 3 -->
+      <div id="personality-prompt-card" style="display:none;">
+        <div class="personality-prompt-icon">🙏</div>
+        <div class="personality-prompt-title">Sakhaa would like to know you better</div>
+        <div class="personality-prompt-body">
+          3 quick things — 30 seconds — so every word feels like it's meant for you.
+        </div>
+        <button class="personality-prompt-btn" onclick="showScreen('screen-personality'); initPersonalityScreen()">Tell Sakhaa →</button>
+      </div>
+
       <!-- Notification permission prompt — shown once, only if not yet granted -->
       <div id="notif-prompt-card" style="display:none;">
         <div class="notif-prompt-icon">🔔</div>
@@ -1655,6 +1777,24 @@
   </div>
 
   <!-- ── HOME ── -->
+  <!-- ── KNOW YOU BETTER ── -->
+  <div id="screen-personality" class="screen fullscreen">
+    <div class="personality-wrap">
+      <div class="personality-progress">
+        <div class="personality-progress-bar">
+          <div class="personality-progress-fill" id="personality-progress-fill"></div>
+        </div>
+        <div class="personality-progress-label" id="personality-progress-label">1 of 3</div>
+      </div>
+
+      <div class="personality-question-wrap" id="personality-question-wrap">
+        <!-- populated by JS -->
+      </div>
+
+      <button class="personality-skip" onclick="skipPersonality()">Skip for now</button>
+    </div>
+  </div>
+
   <div id="screen-home" class="screen">
     <div class="home-header">
       <div class="home-header-top">
@@ -2567,6 +2707,11 @@ I'll be right here when you're ready to talk about anything else.`;
     updateResponseScreen();
     loadGateResponse();
     saveGateSession().catch(e => console.warn('Gate session save failed:', e));
+    // Show "know you better" card on day 3+ if not yet answered
+    if (gateHistory.length >= 2 && userProfile && !userProfile.personalityAnswered) {
+      const card = document.getElementById('personality-prompt-card');
+      if (card) card.style.display = 'block';
+    }
     // Show notification prompt if permission not yet granted
     if ('Notification' in window && Notification.permission === 'default') {
       const prompt = document.getElementById('notif-prompt-card');
@@ -2684,6 +2829,12 @@ Remember: You are their sacred friend. Speak like one.`;
       prompt += 'First time using Sakhaa — greet them warmly and gently.\n';
     } else {
       prompt += `Days using Sakhaa: ${gateHistory.length}\n`;
+    }
+    if (userProfile && userProfile.personality) {
+      const p = userProfile.personality;
+      if (p.lifeStage) prompt += `Life stage: ${p.lifeStage}\n`;
+      if (p.spiritualStyle) prompt += `Spiritual style: ${p.spiritualStyle}\n`;
+      if (p.reasonHere) prompt += `Reason here: ${p.reasonHere}\n`;
     }
     prompt += '=== END MEMORY ===';
 
@@ -2996,6 +3147,12 @@ For this Ask Anything response:
     if (stressSource) prompt += ` (source: ${stressSource})`;
     prompt += '\n';
     if (gateHistory.length > 0) prompt += `Days using Sakhaa: ${gateHistory.length}\n`;
+    if (userProfile && userProfile.personality) {
+      const p = userProfile.personality;
+      if (p.lifeStage) prompt += `Life stage: ${p.lifeStage}\n`;
+      if (p.spiritualStyle) prompt += `Spiritual style: ${p.spiritualStyle}\n`;
+      if (p.reasonHere) prompt += `Reason here: ${p.reasonHere}\n`;
+    }
     prompt += '=== END MEMORY ===';
     return prompt;
   }
@@ -3762,6 +3919,139 @@ For this Ask Anything response:
   });
   window.renderJournalStep = renderJournalStep;
   window.renderPoojaContent = renderPoojaContent;
+
+  // ─── KNOW YOU BETTER ───────────────────────────────────────────────────
+
+  const PERSONALITY_QUESTIONS = [
+    {
+      key: 'lifeStage',
+      question: 'Where are you in life right now?',
+      options: [
+        'Student',
+        'Building my career',
+        'Raising a family',
+        'Finding my way',
+        'Elder & reflecting'
+      ]
+    },
+    {
+      key: 'spiritualStyle',
+      question: 'When it comes to spirituality, you are…',
+      options: [
+        'Someone with a daily ritual',
+        'Someone who follows the seasons and festivals',
+        'Someone exploring for the first time',
+        'Someone who just needs peace right now'
+      ]
+    },
+    {
+      key: 'reasonHere',
+      question: 'What brought you to Sakhaa?',
+      options: [
+        'Stress & anxiety',
+        'Grief or loss',
+        'Seeking daily guidance',
+        'Spiritual growth',
+        'Just curious'
+      ]
+    }
+  ];
+
+  let personalityStep = 0;
+  let personalityAnswers = {};
+
+  window.initPersonalityScreen = function() {
+    personalityStep = 0;
+    personalityAnswers = {};
+    renderPersonalityStep();
+  };
+
+  function renderPersonalityStep() {
+    const q = PERSONALITY_QUESTIONS[personalityStep];
+    const fill = `${Math.round(((personalityStep + 1) / 3) * 100)}%`;
+    document.getElementById('personality-progress-fill').style.width = fill;
+    document.getElementById('personality-progress-label').textContent = `${personalityStep + 1} of 3`;
+
+    const wrap = document.getElementById('personality-question-wrap');
+    wrap.style.opacity = '0';
+    wrap.style.transform = 'translateY(12px)';
+
+    setTimeout(() => {
+      wrap.innerHTML = `
+        <div class="personality-question">${q.question}</div>
+        <div class="personality-options">
+          ${q.options.map(opt => `
+            <button class="personality-option" onclick="selectPersonalityOption('${q.key}', '${opt}', this)">
+              ${opt}
+            </button>
+          `).join('')}
+        </div>
+      `;
+      wrap.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      wrap.style.opacity = '1';
+      wrap.style.transform = 'translateY(0)';
+    }, 150);
+  }
+
+  window.selectPersonalityOption = function(key, value, btn) {
+    // Highlight selected
+    document.querySelectorAll('.personality-option').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    personalityAnswers[key] = value;
+
+    // Auto-advance after brief pause
+    setTimeout(async () => {
+      personalityStep++;
+      if (personalityStep < PERSONALITY_QUESTIONS.length) {
+        renderPersonalityStep();
+      } else {
+        await savePersonalityAnswers();
+      }
+    }, 350);
+  };
+
+  async function savePersonalityAnswers() {
+    try {
+      if (currentUser) {
+        await setDoc(doc(db, `users/${currentUser.uid}/profile/data`), {
+          personality: personalityAnswers,
+          personalityAnswered: true
+        }, { merge: true });
+        if (userProfile) {
+          userProfile.personality = personalityAnswers;
+          userProfile.personalityAnswered = true;
+        }
+      }
+    } catch (e) {
+      console.warn('Personality save failed:', e);
+    }
+    // Warm closing before going home
+    const wrap = document.getElementById('personality-question-wrap');
+    wrap.style.opacity = '0';
+    setTimeout(() => {
+      wrap.innerHTML = `
+        <div style="text-align:center; padding: 40px 0;">
+          <div style="font-size:48px; margin-bottom:20px;">🙏</div>
+          <div style="font-family:var(--font-serif);font-size:26px;color:var(--saffron-deep);margin-bottom:12px;">
+            Thank you, ${userName}
+          </div>
+          <div style="font-size:15px;color:var(--text-secondary);line-height:1.7;">
+            Sakhaa will remember this.<br>Every word from here will feel more like yours.
+          </div>
+        </div>
+      `;
+      wrap.style.opacity = '1';
+      document.getElementById('personality-progress-fill').style.width = '100%';
+      document.getElementById('personality-progress-label').textContent = 'Done';
+      document.querySelector('.personality-skip').style.display = 'none';
+      setTimeout(() => switchTab('home'), 1800);
+    }, 200);
+  }
+
+  window.skipPersonality = function() {
+    document.getElementById('personality-prompt-card').style.display = 'none';
+    switchTab('home');
+  };
 
   // ─── PUSH NOTIFICATIONS ────────────────────────────────────────────────
 
