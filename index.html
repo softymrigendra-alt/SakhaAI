@@ -232,6 +232,57 @@
       font-weight: 600;
     }
 
+    /* ─── LANGUAGE TOGGLE ─── */
+    .lang-toggle-wrap {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .lang-btn {
+      flex: 1;
+      padding: 14px;
+      background: var(--warm-white);
+      border: 1.5px solid rgba(200,118,58,0.2);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .lang-btn.selected {
+      background: var(--saffron-light);
+      border-color: var(--saffron);
+      color: var(--saffron-deep);
+      font-weight: 600;
+    }
+    /* Language toggle in Journey settings */
+    .lang-settings-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .lang-settings-btn {
+      flex: 1;
+      padding: 10px;
+      background: var(--cream);
+      border: 1.5px solid rgba(200,118,58,0.15);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .lang-settings-btn.active {
+      background: var(--saffron-light);
+      border-color: var(--saffron);
+      color: var(--saffron-deep);
+      font-weight: 600;
+    }
+
     /* ─── DHARMA MODE ─── */
     .dharma-mode { font-size: 17px; }
     .dharma-mode .karma-section { display: none; }
@@ -1858,7 +1909,17 @@
         <button class="age-btn" onclick="selectAge('60plus', this)">60 +</button>
       </div>
 
-      <button class="btn-primary" onclick="handleOnboardContinue()">
+      <div class="onboard-label" style="margin-top:20px;">Sakhaa किस भाषा में बात करे?</div>
+      <div class="lang-toggle-wrap">
+        <button class="lang-btn selected" id="lang-btn-en" onclick="selectLanguage('en', this)">
+          English
+        </button>
+        <button class="lang-btn" id="lang-btn-hi" onclick="selectLanguage('hi', this)">
+          हिंदी
+        </button>
+      </div>
+
+      <button class="btn-primary" id="onboard-submit-btn" onclick="handleOnboardContinue()">
         Meet Sakhaa →
       </button>
 
@@ -2283,6 +2344,16 @@
           <span style="font-size: 11px; color: var(--text-tertiary);">Fri</span>
           <span style="font-size: 11px; color: var(--text-tertiary);">Sat</span>
           <span style="font-size: 11px; color: var(--text-tertiary);">Sun</span>
+        </div>
+      </div>
+
+      <!-- Language settings -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-label">Language · भाषा</div>
+        <div style="font-size:14px;color:var(--text-secondary);margin-top:4px;">Sakhaa किस भाषा में बात करे?</div>
+        <div class="lang-settings-row">
+          <button class="lang-settings-btn" id="journey-lang-en" onclick="changeLanguage('en')">English</button>
+          <button class="lang-settings-btn" id="journey-lang-hi" onclick="changeLanguage('hi')">हिंदी</button>
         </div>
       </div>
 
@@ -2822,8 +2893,9 @@ I'll be right here when you're ready to talk about anything else.`;
         karmaPoints = userProfile.karmaPoints || 0;
         karmaStreak = userProfile.karmaStreak || 0;
         const savedMode = userProfile.appMode || detectMode(userProfile.ageRange || '');
+        const savedLang = userProfile.language || (savedMode === 'dharma' ? 'hi' : 'en');
         applyMode(savedMode);
-        if (savedMode === 'dharma') applyDharmaStrings();
+        applyLanguage(savedLang);
         await loadGateHistory(uid);
         hideLoading();
 
@@ -2955,17 +3027,20 @@ I'll be right here when you're ready to talk about anything else.`;
         currentUser = userCred.user;
       }
       const mode = detectMode(selectedAgeRange);
+      // Dharma Mode defaults to Hindi unless user explicitly picked English
+      const lang = appLanguage || (mode === 'dharma' ? 'hi' : 'en');
       await setDoc(doc(db, 'users', currentUser.uid, 'profile', 'data'), {
         name: userName,
         karmaPoints: 0,
         karmaStreak: 0,
         ageRange: selectedAgeRange || 'unknown',
         appMode: mode,
+        language: lang,
         createdAt: serverTimestamp()
       });
-      userProfile = { name: userName, karmaPoints: 0, karmaStreak: 0, ageRange: selectedAgeRange || 'unknown', appMode: mode };
+      userProfile = { name: userName, karmaPoints: 0, karmaStreak: 0, ageRange: selectedAgeRange || 'unknown', appMode: mode, language: lang };
       applyMode(mode);
-      if (mode === 'dharma') applyDharmaStrings();
+      applyLanguage(lang);
       showScreen('screen-gate');
       updateGateGreeting();
     } catch (e) {
@@ -3141,7 +3216,7 @@ What you NEVER do:
 
 When the user is in distress: validate first, wisdom second, practical help third. Always acknowledge feelings before guidance.
 
-Remember: You are their sacred friend. Speak like one.${appMode === 'dharma' ? '\n\nIMPORTANT: Always respond in Hindi using Devanagari script. Keep sentences short, warm, and easy to understand. Avoid complex Sanskrit unless explaining it simply.' : ''}`;
+Remember: You are their sacred friend. Speak like one.${appLanguage === 'hi' ? '\n\nIMPORTANT: Always respond in Hindi using Devanagari script. Keep sentences short, warm, and easy to understand. Avoid complex Sanskrit unless explaining it simply.' : ''}`;
 
     // Memory context
     prompt += `\n\n=== SAKHAA MEMORY ===\nUser: ${userName}\nToday's mood: ${currentMood}`;
@@ -4253,6 +4328,7 @@ For this Ask Anything response:
 
   let selectedAgeRange = '';
   let appMode = 'sakhaa'; // 'sakhaa' | 'dharma'
+  // appLanguage defined in language system block below — referenced here for mode logic
 
   window.selectAge = function(range, btn) {
     selectedAgeRange = range;
@@ -4484,13 +4560,106 @@ For this Ask Anything response:
     'journey-title': 'यात्रा',
   };
 
-  function applyDharmaStrings() {
+  // ─── LANGUAGE SYSTEM ───────────────────────────────────────────────────
+
+  let appLanguage = 'en'; // 'en' | 'hi'
+
+  const STRINGS = {
+    en: {
+      gateQuestion: 'How are you feeling right now?',
+      moodGood: 'Good', moodSoso: 'So-so', moodBad: 'Not great',
+      onboardBtn: 'Meet Sakhaa →',
+      navHome: 'Home', navSaarthi: 'Saarthi', navWisdom: 'Wisdom',
+      navPractice: 'Practice', navJourney: 'Journey',
+      practiceTitle: 'Practice', journeyTitle: 'Your Journey',
+      saarthiPlaceholder: 'Talk to Sakhaa…',
+      wisdomPlaceholder: 'Ask anything…',
+      thinkingMsg: 'Sakhaa is thinking…',
+      errorMsg: 'Something went quiet for a moment — try again',
+    },
+    hi: {
+      gateQuestion: 'आज आप कैसा महसूस कर रहे हैं?',
+      moodGood: 'अच्छा', moodSoso: 'ठीक-ठाक', moodBad: 'अच्छा नहीं',
+      onboardBtn: 'सखा से मिलें →',
+      navHome: 'होम', navSaarthi: 'सारथी', navWisdom: 'ज्ञान',
+      navPractice: 'साधना', navJourney: 'यात्रा',
+      practiceTitle: 'साधना', journeyTitle: 'आपकी यात्रा',
+      saarthiPlaceholder: 'सखा से बात करें…',
+      wisdomPlaceholder: 'कुछ भी पूछें…',
+      thinkingMsg: 'सखा सोच रहे हैं…',
+      errorMsg: 'कुछ पल के लिए शांत हो गया — फिर कोशिश करें',
+    }
+  };
+
+  function applyLanguage(lang) {
+    appLanguage = lang;
+    const s = STRINGS[lang];
+
+    // Gate question
     const gateQ = document.getElementById('gate-question');
-    if (gateQ) gateQ.textContent = DHARMA_STRINGS['gate-question'];
+    if (gateQ) gateQ.textContent = s.gateQuestion;
+
+    // Mood labels
+    const moodLabels = document.querySelectorAll('.mood-label');
+    const moods = [s.moodGood, s.moodSoso, s.moodBad];
+    moodLabels.forEach((el, i) => { if (moods[i]) el.textContent = moods[i]; });
+
+    // Onboard button
+    const onboardBtn = document.getElementById('onboard-submit-btn');
+    if (onboardBtn) onboardBtn.textContent = s.onboardBtn;
+
     // Nav labels
-    const navLabels = document.querySelectorAll('.nav-tab span');
-    const hindiLabels = ['होम', 'सारथी', 'ज्ञान', 'साधना', 'यात्रा'];
-    navLabels.forEach((el, i) => { if (hindiLabels[i]) el.textContent = hindiLabels[i]; });
+    const navSpans = document.querySelectorAll('.nav-tab span');
+    const navKeys = ['navHome','navSaarthi','navWisdom','navPractice','navJourney'];
+    navSpans.forEach((el, i) => { if (navKeys[i]) el.textContent = s[navKeys[i]]; });
+
+    // Screen titles
+    const practiceTitle = document.querySelector('#screen-practice .screen-title');
+    if (practiceTitle) practiceTitle.textContent = s.practiceTitle;
+    const journeyTitle = document.querySelector('#screen-journey .screen-title');
+    if (journeyTitle) journeyTitle.textContent = s.journeyTitle;
+
+    // Input placeholders
+    const saarthiInput = document.getElementById('saarthi-input');
+    if (saarthiInput) saarthiInput.placeholder = s.saarthiPlaceholder;
+    const wisdomInput = document.getElementById('wisdom-input');
+    if (wisdomInput) wisdomInput.placeholder = s.wisdomPlaceholder;
+
+    // Journey language buttons
+    const enBtn = document.getElementById('journey-lang-en');
+    const hiBtn = document.getElementById('journey-lang-hi');
+    if (enBtn) enBtn.classList.toggle('active', lang === 'en');
+    if (hiBtn) hiBtn.classList.toggle('active', lang === 'hi');
+
+    // Onboard toggle buttons
+    const onboardEn = document.getElementById('lang-btn-en');
+    const onboardHi = document.getElementById('lang-btn-hi');
+    if (onboardEn) onboardEn.classList.toggle('selected', lang === 'en');
+    if (onboardHi) onboardHi.classList.toggle('selected', lang === 'hi');
+  }
+
+  // Onboarding language picker
+  window.selectLanguage = function(lang, btn) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    applyLanguage(lang);
+  };
+
+  // Journey settings language change
+  window.changeLanguage = async function(lang) {
+    applyLanguage(lang);
+    if (currentUser) {
+      await setDoc(doc(db, `users/${currentUser.uid}/profile/data`), {
+        language: lang
+      }, { merge: true });
+      if (userProfile) userProfile.language = lang;
+    }
+    showToast(lang === 'hi' ? 'भाषा बदल दी — सखा अब हिंदी में बात करेंगे' : 'Language changed — Sakhaa will now speak English');
+  };
+
+  function applyDharmaStrings() {
+    // Now just a wrapper — Dharma Mode defaults to Hindi
+    applyLanguage('hi');
   }
 
   // ─── KNOW YOU BETTER ───────────────────────────────────────────────────
